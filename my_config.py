@@ -1,6 +1,6 @@
 
 # PATHS
-DIRECTORY = "Directory Path"
+DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 
 # FORMATS
 FILE_FORMAT = "wav"

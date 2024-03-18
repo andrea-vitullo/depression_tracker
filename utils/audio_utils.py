@@ -1,4 +1,5 @@
 import os
+import subprocess
 import matplotlib.pyplot as plt
 import librosa
 import soundfile as sf
@@ -94,3 +95,28 @@ def get_audio_lengths():
     plt.xlabel("Length (seconds)")
     plt.ylabel("Number of audio files")
     plt.show()
+
+
+def get_raw_audio(path, audio):
+    cleaned = audio.replace(my_config.FILE_FORMAT, my_config.START_FORMAT)
+    ip = os.path.join(path, audio)
+    op = os.path.join(path, cleaned)
+    print(f'Found audio file: {ip}')
+
+    return ip, op
+
+
+def remove_noise(input_audio, output_audio):
+    command = ['ffmpeg', '-i', input_audio, '-af', 'anlmdn=s=0.001:p=0.002:r=0.004:m=12, highpass=f=150, lowpass=f=4000',
+               output_audio]
+
+    print(f"Processing: {input_audio}")
+
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process.wait()
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return
+
+    print(f'File processed and saved as: {output_audio}\n')
