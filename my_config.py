@@ -1,6 +1,7 @@
 
 # PATHS
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
+AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABASE"
 
 TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train"
 TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/non_depressed"
