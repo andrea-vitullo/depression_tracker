@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/MFCC.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/audio_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/audio_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +38,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.MFCC.executor": "Run",
     "Python.audio_utils.executor": "Run",
     "Python.diarisation.executor": "Run",
     "Python.noise_removal.executor": "Run",
@@ -83,7 +84,7 @@
       <workItem from="1709728314169" duration="184000" />
       <workItem from="1709734164550" duration="153000" />
       <workItem from="1709734857666" duration="706000" />
-      <workItem from="1710754578538" duration="7970000" />
+      <workItem from="1710754578538" duration="14482000" />
     </task>
     <servers />
   </component>
@@ -96,5 +97,6 @@
     <SUITE FILE_PATH="coverage/final_project$transcripts.coverage" NAME="transcripts Coverage Results" MODIFIED="1707247971937" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$transcripts_utils.coverage" NAME="transcripts_utils Coverage Results" MODIFIED="1707329289107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$diarisation.coverage" NAME="diarisation Coverage Results" MODIFIED="1710772473532" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$MFCC.coverage" NAME="MFCC Coverage Results" MODIFIED="1710779227355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
