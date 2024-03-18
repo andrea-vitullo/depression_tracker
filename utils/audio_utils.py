@@ -3,6 +3,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import librosa
 import soundfile as sf
+import numpy as np
 
 import my_config
 
@@ -80,7 +81,7 @@ def get_audio_lengths():
         None
     """
 
-    audio_lengths = []
+    audio_lengths = {}
 
     for path, directories, files in os.walk(my_config.DIRECTORY):
         for audio in files:
@@ -88,17 +89,33 @@ def get_audio_lengths():
                 full_audio_path = os.path.join(path, audio)
                 waveform, sample_rate = librosa.load(full_audio_path)
                 audio_length_sec = len(waveform) / sample_rate
-                audio_lengths.append(audio_length_sec)
+                audio_lengths[audio] = audio_length_sec
 
-    plt.hist(audio_lengths, bins=50)
-    plt.title("Distribution of audio lengths")
-    plt.xlabel("Length (seconds)")
-    plt.ylabel("Number of audio files")
+    names = list(audio_lengths.keys())
+    values = list(audio_lengths.values())
+
+    fig, ax = plt.subplots(figsize=(80, 20))
+    plt.bar(names, values)
+    plt.title("Lengths of audio files")
+    plt.xlabel("File names")
+    plt.ylabel("Length (seconds)")
+    plt.xticks(names, rotation='vertical')
     plt.show()
 
 
 def get_raw_audio(path, audio):
-    cleaned = audio.replace(my_config.FILE_FORMAT, my_config.START_FORMAT)
+    """
+    Generate the input and output filename for raw audio processing.
+
+    Args:
+        path (str): The directory path where the audio file is located.
+        audio (str): The filename of the audio file to be processed.
+
+    Returns:
+        tuple: A tuple containing the full paths of the input and output audio files.
+    """
+    
+    cleaned = audio.replace(my_config.FILE_FORMAT, my_config.CLEANED_FORMAT)
     ip = os.path.join(path, audio)
     op = os.path.join(path, cleaned)
     print(f'Found audio file: {ip}')
@@ -107,7 +124,32 @@ def get_raw_audio(path, audio):
 
 
 def remove_noise(input_audio, output_audio):
-    command = ['ffmpeg', '-i', input_audio, '-af', 'anlmdn=s=0.001:p=0.002:r=0.004:m=12, highpass=f=150, lowpass=f=4000',
+    """
+    Runs a command that uses FFmpeg to apply several audio filters
+    to the input audio file (-i <input_audio>) and writes the result to the
+    output file.
+
+    The audio filters applied are:
+    - anlmdn: Adaptive non-local means denoising. s, p, r, and m are parameters
+              to control the intensity of noise reduction.
+    - highpass: Filters out audio frequencies below a particular threshold (150Hz).
+    - lowpass: Filters out audio frequencies above a particular threshold (4000Hz).
+
+    Args:
+        input_audio (str): The full path of the audio file to be denoised.
+        output_audio (str): The full path where the denoised audio file will be saved.
+
+    Returns:
+        None.
+
+    Raises:
+        Exception: An exception is raised and the error message printed
+                   if the subprocess call to FFmpeg fails.
+    """
+
+    command = ['ffmpeg', '-i', input_audio, '-af', 'anlmdn=s=0.001:p=0.002:r=0.004:m=12, '
+                                                   'highpass=f=150, '
+                                                   'lowpass=f=4000',
                output_audio]
 
     print(f"Processing: {input_audio}")
@@ -120,3 +162,27 @@ def remove_noise(input_audio, output_audio):
         return
 
     print(f'File processed and saved as: {output_audio}\n')
+
+
+def normalize_audio_files():
+    """
+    Normalize audio files in specified directory
+
+    Args:
+        -
+    Returns:
+        None
+    """
+
+    target_sample_rate = 16000
+
+    for path, directories, files in os.walk(my_config.DIRECTORY):
+        for audio in files:
+            if audio.endswith(my_config.FINAL_FORMAT):
+                full_audio_path = os.path.join(path, audio)
+
+                waveform, sample_rate = librosa.load(full_audio_path, sr=None)
+                waveform = waveform / np.max(np.abs(waveform))
+                waveform = librosa.resample(waveform, orig_sr=sample_rate, target_sr=target_sample_rate)
+                sf.write(full_audio_path, waveform, target_sample_rate)
+

@@ -2,9 +2,25 @@
 # PATHS
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 
+TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train"
+TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/non_depressed"
+TRAIN_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/depressed"
+TRAIN_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/train_split.csv"
+
+DEV_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev"
+DEV_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/non_depressed"
+DEV_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/depressed"
+DEV_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/dev_split.csv"
+
+TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test"
+TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/non_depressed"
+TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/depressed"
+TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/test_split.csv"
+
 # FORMATS
 FILE_FORMAT = "wav"
 START_FORMAT = "AUDIO.wav"
+CLEANED_FORMAT = "cleaned.wav"
 FINAL_FORMAT = "Final.wav"
 SPLIT_FORMAT = "_SPLIT.wav"
 
