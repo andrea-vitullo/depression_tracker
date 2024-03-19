@@ -16,7 +16,7 @@ def vad_cgd(wave, fs, duration_limit=100):
     Args:
         wave (np.array): Waveform of the audio signal
         fs (int): Sampling rate of the audio signal.
-        duration_limit (int): The limit for duration in seconds to process an audio file. Default is 10 seconds.
+        duration_limit (int): The limit for duration in seconds to process an audio file. Default is 100 seconds.
 
     Returns:
         np.array: chirp group delay spectrum of each frame
