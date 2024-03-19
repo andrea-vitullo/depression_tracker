@@ -3,7 +3,7 @@
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABASE"
 
-TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/test_split.csv"
+TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/full_test_split.csv"
 DEV_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/dev_split.csv"
 TRAIN_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/train_split.csv"
 
