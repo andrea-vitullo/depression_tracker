@@ -26,9 +26,6 @@ def vad_mfcc(wave, fs):
     start = 1
     stop = round(framel / 1000 * fs)
     shift = round(frameshift / 1000 * fs)
-    ind = 1
-    win = np.blackman(stop)
-    es = []
     mfcc_results = []
 
     wave = sp.lfilter([1, -0.97], 1, wave)
