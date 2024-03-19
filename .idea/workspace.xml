@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MFCC.py" beforeDir="false" afterPath="$PROJECT_DIR$/MFCC.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/get_formant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_formant.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/my_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +42,7 @@
     "Python.MFCC.executor": "Run",
     "Python.audio_utils.executor": "Run",
     "Python.diarisation.executor": "Run",
+    "Python.get_formant.executor": "Run",
     "Python.noise_removal.executor": "Run",
     "Python.transcripts.executor": "Run",
     "Python.transcripts_utils.executor": "Run",
@@ -82,7 +86,7 @@
       <workItem from="1709728314169" duration="184000" />
       <workItem from="1709734164550" duration="153000" />
       <workItem from="1709734857666" duration="706000" />
-      <workItem from="1710754578538" duration="19280000" />
+      <workItem from="1710754578538" duration="22079000" />
     </task>
     <servers />
   </component>
@@ -91,6 +95,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/final_project$noise_removal.coverage" NAME="noise_removal Coverage Results" MODIFIED="1710770626315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$get_formant.coverage" NAME="get_formant Coverage Results" MODIFIED="1710844472844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$audio_utils.coverage" NAME="audio_utils Coverage Results" MODIFIED="1710774078687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/final_project$transcripts.coverage" NAME="transcripts Coverage Results" MODIFIED="1707247971937" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$transcripts_utils.coverage" NAME="transcripts_utils Coverage Results" MODIFIED="1707329289107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

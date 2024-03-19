@@ -9,17 +9,23 @@ import os
 import my_config
 
 
-def vad_cgd(wave, fs):
+def vad_cgd(wave, fs, duration_limit=100):
     """
     Extracts chirp group delay features from the speech signal.
 
     Args:
         wave (np.array): Waveform of the audio signal
         fs (int): Sampling rate of the audio signal.
+        duration_limit (int): The limit for duration in seconds to process an audio file. Default is 10 seconds.
 
     Returns:
         np.array: chirp group delay spectrum of each frame
+        np.array: peak indices of each frame
     """
+
+    wave_length_seconds = len(wave) / fs
+    if wave_length_seconds > duration_limit:
+        wave = wave[:int(duration_limit * fs)]
 
     framel = 30
     frameshift = 10
@@ -29,17 +35,20 @@ def vad_cgd(wave, fs):
     stop = round(framel / 1000 * fs)
     shift = round(frameshift / 1000 * fs)
     cgd_results = []
+    peak_indices_results = []  # New list to store peak indices
 
     wave = sp.lfilter([1, -0.97], 1, wave)
 
-    while stop <= len(wave):
-        seg = wave[start:stop]
-        seg = np.pad(seg, (0, nfft - len(seg)))
+    while stop <= min(len(wave), int(duration_limit * fs)):
+        seg = np.pad(wave[start:stop], (0, nfft - len(wave[start:stop])))
         win = np.blackman(len(seg))
         seg *= win
 
-        cgd = chirp_group_delay(seg, fs)  # Modified
-        cgd_results.append(cgd)  # Modified
+        cgd = chirp_group_delay(seg, fs)
+        peak_indices = argrelmax(cgd)  # Calculate peak indices separately
+
+        cgd_results.append(cgd)
+        peak_indices_results.append(peak_indices)  # Store peak indices in its own list
 
         start += shift
         stop += shift
@@ -48,7 +57,7 @@ def vad_cgd(wave, fs):
 
     chirp_results -= np.mean(chirp_results, axis=0)
 
-    return chirp_results
+    return cgd_results, peak_indices_results
 
 
 def chirp_group_delay(frame, fs):
@@ -69,13 +78,10 @@ def chirp_group_delay(frame, fs):
     # Group delay is minus derivative of the phase
     chirp_group_delay = -np.diff(ang_fft)
 
-    # Local maxima
-    peak_indices = argrelmax(chirp_group_delay)
-
-    return chirp_group_delay, peak_indices
+    return chirp_group_delay  # Return only the group delays
 
 
-def post_process(formant_peaks, fs=16000, max_formant_delta=250):
+def post_process(formant_peaks, fs=16000, max_formant_delta=250, min_formant_diff=50):
     # Number of frames and formants
     num_frames, num_formants = formant_peaks.shape
 
@@ -91,6 +97,11 @@ def post_process(formant_peaks, fs=16000, max_formant_delta=250):
         current_peaks = formant_peaks[kk, :]
 
         current_peaks_cost = np.zeros(current_peaks.shape)
+
+        # Discard formants that are too close together
+        sorted_peaks = np.sort(current_peaks)
+        too_close = np.where(np.diff(sorted_peaks) < min_formant_diff)[0]
+        current_peaks[too_close] = 0
 
         for mm in range(num_formants):
             if (current_peaks[mm] == 0):
@@ -157,7 +168,35 @@ def post_process(formant_peaks, fs=16000, max_formant_delta=250):
 def save_outputs(features, audio, path):
     """Save features to a CSV file."""
 
+    # Create DataFrame
     df = pd.DataFrame(features)
-    output_files = os.path.join(path, f'{audio[0:3]}_features.csv')
-    df.to_csv(output_files, index=False)
-    print(f"Saving .csv files: {output_files}")
+    # n = 5  # The number of columns to keep (replace as needed)
+    # df = df.iloc[:, :n]
+
+    output_filename = os.path.join(path, f'{audio[0:3]}_features.csv')
+    df.to_csv(output_filename, index=False)
+    print(f"Saving .csv files: {output_filename}\n")
+
+
+for path, directories, files in os.walk(my_config.DIRECTORY):
+    for audio in files:
+        if audio.endswith(my_config.FINAL_FORMAT):
+            full_audio_path = os.path.join(path, audio)
+            print(f"Extracting chirp group delay features from: {full_audio_path}...")
+            wave, fs = librosa.load(full_audio_path, sr=16000)
+            group_delays, peak_indices = vad_cgd(wave, int(fs))  # Unpack the returned tuple
+
+            processed_formants_results = []  # To store processed peaks for each frame
+            for frame_peak_indices in peak_indices:
+                # Convert peak indices to frequency values
+                frame_peak_indices_array = np.array(frame_peak_indices[0])  # Extract numpy array from the tuple
+                frame_peak_freqs = (frame_peak_indices_array / len(wave)) * fs
+                # Convert the list to a 2D numpy array before processing
+                frame_peak_freqs_2D = np.array([frame_peak_freqs])
+                processed_formants = post_process(frame_peak_freqs_2D, int(fs))
+
+                # Flatten the 2D numpy array into 1D
+                processed_formants_flattened = processed_formants.flatten()
+                processed_formants_results.append(processed_formants_flattened)
+
+            save_outputs(processed_formants_results, audio, path=my_config.FORMANT_FEATURES)
