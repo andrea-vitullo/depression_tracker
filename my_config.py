@@ -2,23 +2,41 @@
 # PATHS
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABASE"
+
+TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/test_split.csv"
+DEV_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/dev_split.csv"
+TRAIN_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/train_split.csv"
+
+# MFCCs DIRECTORIES
 MFCC_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_features"
-FORMANT_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_features"
 
 TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train"
 TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/non_depressed"
 TRAIN_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/depressed"
-TRAIN_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/train_split.csv"
 
 DEV_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev"
 DEV_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/non_depressed"
 DEV_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/depressed"
-DEV_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/dev_split.csv"
 
 TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test"
 TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/non_depressed"
 TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/depressed"
-TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/test_split.csv"
+
+
+# FORMANTs DIRECTORIES
+FORMANT_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_features"
+
+FORM_TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train"
+FORM_TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train/non_depressed"
+FORM_TRAIN_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train/depressed"
+
+FORM_DEV_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev"
+FORM_DEV_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev/non_depressed"
+FORM_DEV_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev/depressed"
+
+FORM_TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test"
+FORM_TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test/non_depressed"
+FORM_TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test/depressed"
 
 # FORMATS
 FILE_FORMAT = "wav"
