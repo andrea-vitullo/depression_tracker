@@ -56,7 +56,7 @@ def save_outputs(features, audio, path):
     df = pd.DataFrame(features)
     output_files = os.path.join(path, f'{audio[0:3]}_features.csv')
     df.to_csv(output_files, index=False)
-    print(f"Saving .csv files: {output_files}")
+    print(f"Saving .csv files: {output_files}\n")
 
 
 for path, directories, files in os.walk(my_config.DIRECTORY):
