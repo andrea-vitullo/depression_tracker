@@ -9,16 +9,16 @@ import os
 import my_config
 
 
-def vad_mfcc(wave, fs):
+def vad_cgd(wave, fs):
     """
-    Extracts MFCC features from the speech signal
+    Extracts chirp group delay features from the speech signal.
 
     Args:
         wave (np.array): Waveform of the audio signal
         fs (int): Sampling rate of the audio signal.
 
     Returns:
-        np.array: MFCC features
+        np.array: chirp group delay spectrum of each frame
     """
 
     framel = 30
