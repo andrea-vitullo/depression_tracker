@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="" />
+    <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/mfcc_sorting.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
