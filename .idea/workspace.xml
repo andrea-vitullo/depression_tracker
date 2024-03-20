@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/utils/file_management.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MFCC.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_MFCC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_formant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_formant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/audio_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/audio_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/formant_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/formant_sorting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mfcc_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/mfcc_sorting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/file_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/file_management.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,8 +101,8 @@
     <SUITE FILE_PATH="coverage/final_project$transcripts.coverage" NAME="transcripts Coverage Results" MODIFIED="1707247971937" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$transcripts_utils.coverage" NAME="transcripts_utils Coverage Results" MODIFIED="1707329289107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$diarisation.coverage" NAME="diarisation Coverage Results" MODIFIED="1710772473532" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$formant_sorting.coverage" NAME="formant_sorting Coverage Results" MODIFIED="1710858319782" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$mfcc_sorting.coverage" NAME="mfcc_sorting Coverage Results" MODIFIED="1710858381159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$formant_sorting.coverage" NAME="formant_sorting Coverage Results" MODIFIED="1710944163198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$mfcc_sorting.coverage" NAME="mfcc_sorting Coverage Results" MODIFIED="1710943522235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$MFCC.coverage" NAME="MFCC Coverage Results" MODIFIED="1710779227355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
