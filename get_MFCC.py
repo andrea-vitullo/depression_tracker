@@ -1,10 +1,10 @@
 import numpy as np
 import scipy.signal as sp
 import librosa
-import pandas as pd
 import os
 
 import my_config
+from utils import file_management
 
 
 def vad_mfcc(wave, fs):
@@ -50,15 +50,6 @@ def vad_mfcc(wave, fs):
     return mfcc.T
 
 
-def save_outputs(features, audio, path):
-    """Save augmented features to a CSV file."""
-
-    df = pd.DataFrame(features)
-    output_files = os.path.join(path, f'{audio[0:3]}_features.csv')
-    df.to_csv(output_files, index=False)
-    print(f"Saving .csv files: {output_files}\n")
-
-
 for path, directories, files in os.walk(my_config.DIRECTORY):
     for audio in files:
         if audio.endswith(my_config.FINAL_FORMAT):
@@ -67,4 +58,4 @@ for path, directories, files in os.walk(my_config.DIRECTORY):
             waveform, fs = librosa.load(full_audio_path, sr=16000)
             features = vad_mfcc(waveform, fs)
 
-            save_outputs(features, audio, path=my_config.MFCC_FEATURES)
+            file_management.save_outputs(features, audio, path=my_config.MFCC_FEATURES)

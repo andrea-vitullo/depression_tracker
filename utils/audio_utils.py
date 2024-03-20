@@ -186,25 +186,3 @@ def normalize_audio_files():
                 waveform = waveform / np.max(np.abs(waveform))
                 waveform = librosa.resample(waveform, orig_sr=sample_rate, target_sr=target_sample_rate)
                 sf.write(full_audio_path, waveform, target_sample_rate)
-
-
-def wave_mover():
-    """
-    Copies audio files from a specified source directory to a target directory.
-
-    This function walks through the file hierarchy rooted at `my_config.DIRECTORY`,
-    and for every file that ends with `my_config.FINAL_FORMAT`, it copies
-    the file from its current location to the directory specified by `my_config.AUDIO_TEST_DIRECTORY`.
-
-    Args:
-        -
-    Returns:
-        None
-    """
-
-    for path, directories, files in os.walk(my_config.DIRECTORY):
-        for file in files:
-            if file.endswith(my_config.FINAL_FORMAT):
-                source_file = os.path.join(path, file)
-                target_file = os.path.join(my_config.AUDIO_TEST_DIRECTORY, file)
-                shutil.copy(source_file, target_file)

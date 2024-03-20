@@ -3,10 +3,10 @@ import scipy.signal as sp
 import scipy.fft as fft
 from scipy.signal import argrelmax
 import librosa
-import pandas as pd
 import os
 
 import my_config
+from utils import file_management
 
 
 def vad_cgd(wave, fs, duration_limit=100):
@@ -165,19 +165,6 @@ def post_process(formant_peaks, fs=16000, max_formant_delta=250, min_formant_dif
     return formant_peaks
 
 
-def save_outputs(features, audio, path):
-    """Save features to a CSV file."""
-
-    # Create DataFrame
-    df = pd.DataFrame(features)
-    # n = 5  # The number of columns to keep (replace as needed)
-    # df = df.iloc[:, :n]
-
-    output_filename = os.path.join(path, f'{audio[0:3]}_features.csv')
-    df.to_csv(output_filename, index=False)
-    print(f"Saving .csv files: {output_filename}\n")
-
-
 for path, directories, files in os.walk(my_config.DIRECTORY):
     for audio in files:
         if audio.endswith(my_config.FINAL_FORMAT):
@@ -199,4 +186,4 @@ for path, directories, files in os.walk(my_config.DIRECTORY):
                 processed_formants_flattened = processed_formants.flatten()
                 processed_formants_results.append(processed_formants_flattened)
 
-            save_outputs(processed_formants_results, audio, path=my_config.FORMANT_FEATURES)
+            file_management.save_outputs(processed_formants_results, audio, path=my_config.FORMANT_FEATURES)
