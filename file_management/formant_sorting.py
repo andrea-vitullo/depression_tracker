@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 import my_config
-from utils import file_management
+from utils import file_utils
 
 train_df = pd.read_csv(my_config.TRAIN_SPLIT)
 dev_df = pd.read_csv(my_config.DEV_SPLIT)

@@ -6,7 +6,7 @@ import librosa
 import os
 
 import my_config
-from utils import file_management
+from utils import file_utils
 
 
 def vad_cgd(wave, fs, duration_limit=100):

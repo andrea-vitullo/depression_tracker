@@ -4,7 +4,7 @@ import librosa
 import os
 
 import my_config
-from utils import file_management
+from utils import file_utils
 
 
 def vad_mfcc(wave, fs):
