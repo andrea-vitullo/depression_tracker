@@ -58,4 +58,4 @@ for path, directories, files in os.walk(my_config.DIRECTORY):
             waveform, fs = librosa.load(full_audio_path, sr=16000)
             features = vad_mfcc(waveform, fs)
 
-            file_management.save_outputs(features, audio, path=my_config.MFCC_FEATURES)
+            file_utils.save_outputs(features, audio, path=my_config.MFCC_FEATURES)

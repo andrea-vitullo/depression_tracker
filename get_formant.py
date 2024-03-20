@@ -186,4 +186,4 @@ for path, directories, files in os.walk(my_config.DIRECTORY):
                 processed_formants_flattened = processed_formants.flatten()
                 processed_formants_results.append(processed_formants_flattened)
 
-            file_management.save_outputs(processed_formants_results, audio, path=my_config.FORMANT_FEATURES)
+            file_utils.save_outputs(processed_formants_results, audio, path=my_config.FORMANT_FEATURES)

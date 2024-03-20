@@ -5,12 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/formant_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/file_management/formant_sorting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/file_management/formant_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/file_management/formant_sorting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/file_management/mfcc_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/file_management/mfcc_sorting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/get_MFCC.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_MFCC.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/get_formant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_formant.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mfcc_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/file_management/mfcc_sorting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/file_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/file_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/audio_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/audio_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +64,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/file_management" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/utils" />
     </key>
   </component>

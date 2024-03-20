@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import librosa
 import soundfile as sf
 import numpy as np
-import shutil
 
 import my_config
 
