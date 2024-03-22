@@ -57,19 +57,16 @@ def save_outputs(features, audio, path):
     print(f"Saving .csv files: {output_filename}\n")
 
 
-def file_sorter(file_path, dir_0, dir_1, binary_value, filename, source_file_path):
+def file_sorter(file_path, dir_0, dir_1, binary_value, gender_value, filename, source_file_path):
     """
-    Sorts and moves a file to a specific directory based on a binary value.
-
-    This function checks if the source file exists, determines the appropriate destination
-    directory based on the binary value, then moves the file from source to the dedicated
-    destination directory. It prints a successful move operation or a file not found error.
+    Sorts and moves a file to a specific directory based on a binary value and gender.
 
     Args:
         file_path (str): The path of the file to be moved.
         dir_0 (str): The destination directory for files with a binary value of 0.
         dir_1 (str): The destination directory for files with a binary value of 1.
-        binary_value (int): Binary flag (0 or 1) to determine the destination directory for file.
+        binary_value (int): Binary flag (0 or 1) to determine the destination directory for depression status.
+        gender_value (int): Binary flag (0 or 1) to determine the subdirectory for gender within the depression status.
         filename (str): The name of the file to be moved.
         source_file_path (str): Path of the file in the source directory.
 
@@ -78,9 +75,16 @@ def file_sorter(file_path, dir_0, dir_1, binary_value, filename, source_file_pat
     """
 
     if os.path.exists(source_file_path):
+        # Determine main destination directory based on binary_value
+        main_dest_dir = dir_1 if binary_value == 1 else dir_0
 
-        # Determine destination directory based on binary_value
-        dest_dir = dir_1 if binary_value == 1 else dir_0
+        # Determine subdirectory based on gender_value
+        gender_dir = "male" if gender_value == 1 else "female"
+        dest_dir = os.path.join(main_dest_dir, gender_dir)
+
+        # Create the gender subdirectory if it doesn't exist
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
 
         # Create destination file path
         dest_file_path = os.path.join(dest_dir, filename)
