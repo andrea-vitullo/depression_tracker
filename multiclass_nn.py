@@ -3,6 +3,8 @@ from keras import layers
 from keras import regularizers
 from keras.utils import plot_model, to_categorical
 from keras.models import Model
+from keras.callbacks import ReduceLROnPlateau, EarlyStopping, LearningRateScheduler
+import math
 import glob
 import librosa
 from librosa.effects import time_stretch, pitch_shift
@@ -15,6 +17,17 @@ import my_config
 SAMPLERATE = 16000
 
 
+# Learning Rate Scheduler
+def step_decay(epoch):
+    initial_lrate = 0.001
+    drop = 0.5
+    epochs_drop = 10.0
+    lrate = initial_lrate * math.pow(drop, math.floor((1+epoch)/epochs_drop))
+    return lrate
+
+lrate = LearningRateScheduler(step_decay)
+
+
 def add_noise(data, noise_factor=0.005):
     noise = np.random.randn(len(data))
     augmented_data = data + noise_factor * noise
@@ -23,48 +36,35 @@ def add_noise(data, noise_factor=0.005):
     return augmented_data
 
 
+def extract_mfcc_and_pad(audio, sr, max_length=8000, n_mfcc=40):
+    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_fft=1024, hop_length=160, n_mfcc=n_mfcc)
+    pad_width = max_length - mfccs.shape[1]
+    if pad_width > 0:
+        mfccs_padded = np.pad(mfccs, pad_width=((0, 0), (0, pad_width)), mode='constant')
+    else:
+        mfccs_padded = mfccs[:, :max_length]
+    return mfccs_padded.T
+
+
 def extract_features(file_paths, labels, augment=False):
-    X = []
-    y = []
+    X, y = [], []
+    max_length = 8000  # Adjust as needed
 
     for file_path, label in zip(file_paths, labels):
         audio, sr = librosa.load(file_path, sr=SAMPLERATE)
-        mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_fft=1024, hop_length=160, n_mfcc=70).T[:7000]
-        X.append(mfccs)
+        mfccs_padded = extract_mfcc_and_pad(audio, sr, max_length)
+
+        X.append(mfccs_padded)
         y.append(label)
 
-        if augment and label == 0:  # Assuming '0' is the label for the non-depressed class
-            # Apply different augmentations
-            for _ in range(non_depressed_augmentations):  # Define how many augmented versions you want
-
-                noise_audio = add_noise(audio)
-
-                # Extract MFCCs from augmented audio and add to the dataset
-                augmented_mfccs = librosa.feature.mfcc(y=noise_audio, sr=sr, n_fft=1024, hop_length=160, n_mfcc=70).T[:7000]
-                X.append(augmented_mfccs)
-                y.append(label)
-
-        # Check if augmentation is to be applied and if the sample is from the depressed class
-        if augment and label == 1:  # Assuming '1' is the label for the depressed class
-            # Apply different augmentations
-            for _ in range(depressed_augmentations):  # Define how many augmented versions you want
-
-                noise_audio = add_noise(audio)
-
-                # # Time-stretch the waveform (speed up or slow down)
-                # stretch_rate = np.random.uniform(0.8, 1.2)
-                # stretched_audio = time_stretch(y=audio, rate=stretch_rate)
-                #
-                # # Pitch-shift the waveform (up or down in semitones)
-                # n_steps = np.random.randint(-1, 2)
-                # shifted_audio = pitch_shift(stretched_audio, sr=sr, n_steps=n_steps)
-
-                # Extract MFCCs from augmented audio and add to the dataset
-                augmented_mfccs = librosa.feature.mfcc(y=noise_audio, sr=sr, n_fft=1024, hop_length=160, n_mfcc=70).T[:7000]
-                X.append(augmented_mfccs)
-                y.append(label)
+        if augment:
+            noise_audio = add_noise(audio)
+            augmented_mfccs_padded = extract_mfcc_and_pad(noise_audio, sr, max_length)
+            X.append(augmented_mfccs_padded)
+            y.append(label)
 
     return np.array(X), np.array(y)
+
 
 
 # Define the number of augmented versions to generate for each depressed class sample
@@ -97,8 +97,8 @@ X_dev, y_dev = extract_features(dev_files, dev_labels, augment=False)  # Typical
 y_train = to_categorical(y_train, num_classes=4)
 y_dev = to_categorical(y_dev, num_classes=4)
 
-n_mfcc = 70
-input_shape = (7000, n_mfcc)
+n_mfcc = 40
+input_shape = (8000, n_mfcc)
 
 input_layer = keras.layers.Input(input_shape)
 # Create convolutional layers
@@ -126,7 +126,7 @@ hybrid_model = Model(input_layer, hybrid_output)
 plot_model(hybrid_model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
 epochs = 500
-batch_size = 64
+batch_size = 32
 
 # Define optimizer
 opt = keras.optimizers.Adam(learning_rate=0.001)
@@ -138,10 +138,10 @@ hybrid_model.compile(optimizer=opt,
 
 # Define additional callback options
 callbacks = [
-    keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5,
-                                      patience=10, min_lr=0.001),
-    keras.callbacks.EarlyStopping(monitor="val_loss", patience=50, verbose=1)
-    ]
+    ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=10, min_lr=0.0001),
+    EarlyStopping(monitor="val_loss", patience=50, verbose=1),
+    lrate
+]
 
 # Fit the model
 history = hybrid_model.fit(X_train, y_train,
