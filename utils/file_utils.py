@@ -24,7 +24,7 @@ def wave_mover():
         for file in files:
             if file.endswith(my_config.FINAL_FORMAT):
                 source_file = os.path.join(path, file)
-                target_file = os.path.join(my_config.AUDIO_TEST_DIRECTORY, file)
+                target_file = os.path.join(my_config.AUDIO_FEATURES, file)
                 shutil.copy(source_file, target_file)
 
 
