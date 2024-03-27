@@ -66,6 +66,8 @@ CLEANED_FORMAT = "cleaned.wav"
 FINAL_FORMAT = "Final.wav"
 SPLIT_FORMAT = "_SPLIT.wav"
 
+LABELS = [0, 1, 2, 3]
+
 # EXTRACTION FUNCTION
 # [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
 EXTRACTION_FUNCTION = extract_raw_audio
@@ -101,6 +103,3 @@ N_CHANNELS = 1
 INITIAL_LEARNING_RATE = 0.001
 DECAY_FACTOR = 0.9
 EPOCHS_DROP = 2  # or 3
-
-
-N_F0 = 1

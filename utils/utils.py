@@ -1,3 +1,5 @@
+import glob
+
 from my_config import *
 from data_generator import DataGenerator
 
@@ -26,3 +28,16 @@ def create_datagenerator(extraction_function, train_filepath, dev_filepath, test
         raise ValueError("Invalid extraction_function. Must be one of [extract_raw_audio, extract_mfcc, extract_logmel]")
 
     return train_generator, dev_generator, test_generator
+
+
+def load_files_labels(directories, labels):
+    files = []
+    label_list = []
+
+    for directory, label in zip(directories, labels):
+        for gender in ['male', 'female']:
+            gender_files = glob.glob(f"{directory}/{gender}/*.wav")
+            files.extend(gender_files)
+            label_list.extend([label] * len(gender_files))
+
+    return files, label_list

@@ -5,7 +5,6 @@ from keras.layers import Conv1D, Reshape, LSTM, Dense
 from keras.utils import plot_model
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, LearningRateScheduler
-import glob
 import librosa
 from librosa.effects import time_stretch, pitch_shift
 import random
@@ -83,34 +82,16 @@ female_non_depressed_augmentations = 1
 male_depressed_augmentations = 2
 female_depressed_augmentations = 2
 
-train_files_male_nd = glob.glob(AUDIO_TRAIN_DIR_0 + '/male/*.wav')  # non_depressed
-train_files_female_nd = glob.glob(AUDIO_TRAIN_DIR_0 + '/female/*.wav')
-train_files_male_d = glob.glob(AUDIO_TRAIN_DIR_1 + '/male/*.wav')  # depressed
-train_files_female_d = glob.glob(AUDIO_TRAIN_DIR_1 + '/female/*.wav')
 
-dev_files_male_nd = glob.glob(AUDIO_DEV_DIR_0 + '/male/*.wav')  # non_depressed
-dev_files_female_nd = glob.glob(AUDIO_DEV_DIR_0 + '/female/*.wav')
-dev_files_male_d = glob.glob(AUDIO_DEV_DIR_1 + '/male/*.wav')  # depressed
-dev_files_female_d = glob.glob(AUDIO_DEV_DIR_1 + '/female/*.wav')
+# Define directory and label mappings
+AUDIO_TRAIN_DIRS = [AUDIO_TRAIN_DIR_0, AUDIO_TRAIN_DIR_0, AUDIO_TRAIN_DIR_1, AUDIO_TRAIN_DIR_1]
+AUDIO_DEV_DIRS = [AUDIO_DEV_DIR_0, AUDIO_DEV_DIR_0, AUDIO_DEV_DIR_1, AUDIO_DEV_DIR_1]
+AUDIO_TEST_DIRS = [AUDIO_TEST_DIR_0, AUDIO_TEST_DIR_0, AUDIO_TEST_DIR_1, AUDIO_TEST_DIR_1]
 
-# Load test files
-test_files_male_nd = glob.glob(AUDIO_TEST_DIR_0 + '/male/*.wav')
-test_files_female_nd = glob.glob(AUDIO_TEST_DIR_0 + '/female/*.wav')
-test_files_male_d = glob.glob(AUDIO_TEST_DIR_1 + '/male/*.wav')
-test_files_female_d = glob.glob(AUDIO_TEST_DIR_1 + '/female/*.wav')
-
-train_files = train_files_male_nd + train_files_female_nd + train_files_male_d + train_files_female_d
-train_labels = [0]*len(train_files_male_nd) + [1]*len(train_files_female_nd) + \
-               [2]*len(train_files_male_d) + [3]*len(train_files_female_d)
-
-dev_files = dev_files_male_nd + dev_files_female_nd + dev_files_male_d + dev_files_female_d
-dev_labels = [0]*len(dev_files_male_nd) + [1]*len(dev_files_female_nd) + \
-             [2]*len(dev_files_male_d) + [3]*len(dev_files_female_d)
-
-# Assuming you have a test set ready similar to train and dev sets
-test_files = test_files_male_nd + test_files_female_nd + test_files_male_d + test_files_female_d
-test_labels = [0]*len(test_files_male_nd) + [0]*len(test_files_female_nd) + \
-              [1]*len(test_files_male_d) + [1]*len(test_files_female_d)
+# Load the data
+train_files, train_labels = utils.load_files_labels(AUDIO_TRAIN_DIRS, LABELS)
+dev_files, dev_labels = utils.load_files_labels(AUDIO_DEV_DIRS, LABELS)
+test_files, test_labels = utils.load_files_labels(AUDIO_TEST_DIRS, LABELS)
 
 
 # Check first few labels
