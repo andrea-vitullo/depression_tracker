@@ -1,4 +1,6 @@
 import glob
+import h5py
+import numpy as np
 
 from my_config import *
 from data_generator import DataGenerator
@@ -42,3 +44,21 @@ def load_files_labels(directories, labels):
             label_list.extend([label] * len(gender_files))
 
     return files, label_list
+
+
+def load_features(file_path):
+    with h5py.File(file_path, 'r') as h5f:
+        # Let's assume we know the number of samples beforehand
+        num_samples = len(h5f.keys())
+        # Let's assume all audio data have the same shape
+        sample_shape = h5f[list(h5f.keys())[0]]['audio'].shape
+
+        # Pre-allocate arrays
+        audio_data = np.zeros((num_samples,) + sample_shape)
+        labels = np.zeros((num_samples, 1))  # assuming labels are scalar values
+
+        for i, key in enumerate(h5f.keys()):
+            audio_data[i] = h5f[key]['audio'][:]
+            labels[i] = h5f[key].attrs['label']
+
+        return audio_data, labels
