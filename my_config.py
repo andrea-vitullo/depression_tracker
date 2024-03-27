@@ -1,6 +1,3 @@
-from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
-
-
 # PATHS
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABASE"
@@ -8,37 +5,6 @@ AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABAS
 TEST_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/full_test_split.csv"
 DEV_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/dev_split.csv"
 TRAIN_SPLIT = "/Users/andreavitullo/Desktop/DATABASE_TEST/train_split.csv"
-
-# MFCCs DIRECTORIES
-MFCC_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_features"
-
-TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train"
-TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/non_depressed"
-TRAIN_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_train/depressed"
-
-DEV_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev"
-DEV_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/non_depressed"
-DEV_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_dev/depressed"
-
-TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test"
-TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/non_depressed"
-TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/mfcc_test/depressed"
-
-
-# FORMANTs DIRECTORIES
-FORMANT_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_features"
-
-FORM_TRAIN_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train"
-FORM_TRAIN_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train/non_depressed"
-FORM_TRAIN_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_train/depressed"
-
-FORM_DEV_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev"
-FORM_DEV_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev/non_depressed"
-FORM_DEV_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_dev/depressed"
-
-FORM_TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test"
-FORM_TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test/non_depressed"
-FORM_TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/formant_test/depressed"
 
 # AUDIO DIRECTORIES
 AUDIO_FEATURES = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_files"
@@ -67,10 +33,6 @@ FINAL_FORMAT = "Final.wav"
 SPLIT_FORMAT = "_SPLIT.wav"
 
 LABELS = [0, 1, 2, 3]
-
-# EXTRACTION FUNCTION
-# [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
-EXTRACTION_FUNCTION = extract_raw_audio
 
 # MFCC PARAMETERS
 N_MFCC = 5

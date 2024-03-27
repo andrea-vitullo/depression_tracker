@@ -2,6 +2,7 @@ import glob
 
 from my_config import *
 from data_generator import DataGenerator
+from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
 
 
 def lr_scheduler(epoch, lr):

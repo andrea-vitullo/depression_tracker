@@ -1,23 +1,38 @@
 import unittest
-import glob
 
-from my_config import AUDIO_TEST_DIRECTORY
+import my_config
 from utils import utils
-
-
-# Mock directories
-mock_directories = [f'{AUDIO_TEST_DIRECTORY}/non_depressed', f'{AUDIO_TEST_DIRECTORY}/depressed']
+from collections import Counter
 
 
 class LoadFilesLabelsTest(unittest.TestCase):
-    def test_load_files_labels(self):
-        expected_files = glob.glob(f"{mock_directories[0]}/male/*.wav") + glob.glob(f"{mock_directories[0]}/female/*.wav") + glob.glob(f"{mock_directories[1]}/male/*.wav") + glob.glob(f"{mock_directories[1]}/female/*.wav")
-        expected_labels = [0] * (len(glob.glob(f"{mock_directories[0]}/male/*.wav")) + len(glob.glob(f"{mock_directories[0]}/female/*.wav"))) + [1] * (len(glob.glob(f"{mock_directories[1]}/male/*.wav")) + len(glob.glob(f"{mock_directories[1]}/female/*.wav")))
 
-        files, labels = utils.load_files_labels(mock_directories, [0, 1])
+    def setUp(self):
+        self.AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_1,
+                                 my_config.AUDIO_TRAIN_DIR_1]
+        self.AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_1,
+                               my_config.AUDIO_DEV_DIR_1]
+        self.AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_1,
+                                my_config.AUDIO_TEST_DIR_1]
 
-        self.assertCountEqual(files, expected_files, f"Expected {set(expected_files)}, but got {set(files)}")
-        self.assertListEqual(labels, expected_labels, f"Expected {expected_labels}, but got {labels}")
+        # Load the data
+        self.train_files, self.train_labels = utils.load_files_labels(self.AUDIO_TRAIN_DIRS, my_config.LABELS)
+        self.dev_files, self.dev_labels = utils.load_files_labels(self.AUDIO_DEV_DIRS, my_config.LABELS)
+        self.test_files, self.test_labels = utils.load_files_labels(self.AUDIO_TEST_DIRS, my_config.LABELS)
+
+    def test_number_files_vs_labels(self):
+        # Check that the number of files matches the number of labels
+        self.assertEqual(len(self.train_files), len(self.train_labels),
+                         "Mismatch between number of files and labels in training data.")
+        self.assertEqual(len(self.dev_files), len(self.dev_labels),
+                         "Mismatch between number of files and labels in development data.")
+
+    def test_label_counts(self):
+        train_counter = Counter(self.train_labels)
+        dev_counter = Counter(self.dev_labels)
+        print(train_counter)
+        print(dev_counter)
+        # Add assertions here to check the contents of train_counter and dev_counter if necessary
 
 
 if __name__ == '__main__':

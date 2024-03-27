@@ -15,78 +15,23 @@ import h5py
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
-from my_config import *
+import my_config
+from my_config import SAMPLERATE, MAX_LENGTH, LABELS, EPOCHS, NSEG, H
 from utils import audio_utils
 from utils import utils
+from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
+from preprocess import preprocess_and_save_features
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False, extraction_func=EXTRACTION_FUNCTION):
-    output_dir = os.path.dirname(output_file_path)
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    with h5py.File(output_file_path, 'w') as h5f:
-        for i, (file_path, label) in enumerate(zip(file_paths, labels)):
-            print(f"Processing file: {file_path}")
-            audio, sr = librosa.load(file_path, sr=SAMPLERATE)
-
-            if len(audio) > MAX_LENGTH:
-                audio = audio[:MAX_LENGTH]
-            elif len(audio) < MAX_LENGTH:
-                padding = MAX_LENGTH - len(audio)
-                audio = np.pad(audio, (0, padding), 'constant')
-
-            audio_features_padded = extraction_func(audio, sr)
-
-            # Map multi-class labels to binary labels here
-            if label in [0, 1]:    # Non-depressed
-                binary_label = 0
-            elif label in [2, 3]:  # Depressed
-                binary_label = 1
-
-            grp = h5f.create_group(str(i))
-            grp.create_dataset('audio', data=audio_features_padded, compression='gzip')
-            grp.attrs['label'] = binary_label
-
-            if augment:
-                # Determine the number of augmentations based on the label
-                if binary_label == 0:
-                    num_augmentations = male_non_depressed_augmentations + female_non_depressed_augmentations
-                elif binary_label == 1:
-                    num_augmentations = male_depressed_augmentations + female_depressed_augmentations
-
-                for aug_index in range(num_augmentations):
-                    augmentation_type = random.choice(['noise'])
-                    print(f"Augmentation type: {augmentation_type}")
-
-                    if augmentation_type == 'noise':
-                        augmented_audio = audio_utils.add_noise(audio)
-                    # elif augmentation_type == 'stretch':
-                        # stretch_rate = random.uniform(0.9, 1.1)
-                        # augmented_audio = time_stretch(audio, rate=stretch_rate)
-                    # elif augmentation_type == 'shift':
-                    #     n_steps = random.randint(-1, 1)
-                    #     augmented_audio = pitch_shift(audio, sr=sr, n_steps=n_steps)
-
-                    augmented_mfcc_features = extract_raw_audio(augmented_audio, sr)
-                    aug_grp = h5f.create_group(f"{i}_aug_{aug_index}")
-                    aug_grp.create_dataset('audio', data=augmented_mfcc_features, compression='gzip')
-                    aug_grp.attrs['label'] = binary_label
-
-                    print(f"Augmented audio label: {binary_label}")
-
-
-# Define the number of augmented versions to generate for each depressed class sample
-male_non_depressed_augmentations = 0
-female_non_depressed_augmentations = 1
-male_depressed_augmentations = 2
-female_depressed_augmentations = 2
+# EXTRACTION FUNCTION
+# [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
+EXTRACTION_FUNCTION = extract_raw_audio
 
 
 # Define directory and label mappings
-AUDIO_TRAIN_DIRS = [AUDIO_TRAIN_DIR_0, AUDIO_TRAIN_DIR_0, AUDIO_TRAIN_DIR_1, AUDIO_TRAIN_DIR_1]
-AUDIO_DEV_DIRS = [AUDIO_DEV_DIR_0, AUDIO_DEV_DIR_0, AUDIO_DEV_DIR_1, AUDIO_DEV_DIR_1]
-AUDIO_TEST_DIRS = [AUDIO_TEST_DIR_0, AUDIO_TEST_DIR_0, AUDIO_TEST_DIR_1, AUDIO_TEST_DIR_1]
+AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_1, my_config.AUDIO_TRAIN_DIR_1]
+AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_1, my_config.AUDIO_DEV_DIR_1]
+AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_1, my_config.AUDIO_TEST_DIR_1]
 
 # Load the data
 train_files, train_labels = utils.load_files_labels(AUDIO_TRAIN_DIRS, LABELS)
@@ -94,26 +39,10 @@ dev_files, dev_labels = utils.load_files_labels(AUDIO_DEV_DIRS, LABELS)
 test_files, test_labels = utils.load_files_labels(AUDIO_TEST_DIRS, LABELS)
 
 
-# Check first few labels
-for file, label in zip(train_files[:10], train_labels[:10]):
-    print(f"File: {file}, Label: {label}")
-
-# Check last few labels
-for file, label in zip(train_files[-10:], train_labels[-10:]):
-    print(f"File: {file}, Label: {label}")
-
-assert len(train_files) == len(train_labels), "Mismatch between number of files and labels in training data."
-assert len(dev_files) == len(dev_labels), "Mismatch between number of files and labels in development data."
-
-from collections import Counter
-
-print(Counter(train_labels))
-print(Counter(dev_labels))
-
 preprocess_and_save_features(
     train_files,
     train_labels,
-    './processed_audio_features/train_features_raw.h5',
+    './processed_audio_features/train_features.h5',
     augment=True,
     extraction_func=EXTRACTION_FUNCTION
 )
@@ -121,7 +50,7 @@ preprocess_and_save_features(
 preprocess_and_save_features(
     dev_files,
     dev_labels,
-    './processed_audio_features/dev_features_raw.h5',
+    './processed_audio_features/dev_features.h5',
     augment=False,
     extraction_func=EXTRACTION_FUNCTION
 )
@@ -139,7 +68,7 @@ train_generator, dev_generator, test_generator = utils.create_datagenerator(
     './processed_audio_features/train_features.h5',
     './processed_audio_features/dev_features.h5',
     './processed_audio_features/test_features.h5',
-    BATCH_SIZE
+    my_config.BATCH_SIZE
 )
 
 
@@ -153,9 +82,9 @@ train_dataset = tf.data.Dataset.from_generator(
     train_gen,
     output_signature=(
         {
-            "input_1": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
+            "input_1": tf.TensorSpec(shape=(my_config.BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
         },
-        tf.TensorSpec(shape=(BATCH_SIZE, NUM_CLASSES), dtype=tf.float32),
+        tf.TensorSpec(shape=(my_config.BATCH_SIZE, my_config.NUM_CLASSES), dtype=tf.float32),
     ),
 )
 
@@ -169,9 +98,9 @@ dev_dataset = tf.data.Dataset.from_generator(
     dev_gen,
     output_signature=(
         {
-            "input_1": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
+            "input_1": tf.TensorSpec(shape=(my_config.BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
         },
-        tf.TensorSpec(shape=(BATCH_SIZE, NUM_CLASSES), dtype=tf.float32),
+        tf.TensorSpec(shape=(my_config.BATCH_SIZE, my_config.NUM_CLASSES), dtype=tf.float32),
     ),
 )
 
@@ -208,7 +137,7 @@ plot_model(hybrid_model, to_file='model_plot.png', show_shapes=True, show_layer_
 epochs = EPOCHS
 
 # Define optimizer
-opt = keras.optimizers.legacy.Adam(learning_rate=INITIAL_LEARNING_RATE)
+opt = keras.optimizers.legacy.Adam(learning_rate=my_config.INITIAL_LEARNING_RATE)
 
 # # Compile the model for multi-class
 # hybrid_model.compile(optimizer=opt,

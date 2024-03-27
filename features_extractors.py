@@ -2,10 +2,11 @@ import numpy as np
 import librosa
 from sklearn.preprocessing import StandardScaler
 
-from my_config import *
+import my_config
 from utils import audio_utils
 
-def extract_raw_audio(audio, sr, target_length=NSEG * H):
+
+def extract_raw_audio(audio, sr, target_length=my_config.NSEG * my_config.H):
     # If the audio's length is more than target_length, we truncate it
     if len(audio) > target_length:
         audio = audio[:target_length]
@@ -25,9 +26,9 @@ def extract_raw_audio(audio, sr, target_length=NSEG * H):
     return audio[:, np.newaxis]
 
 
-def extract_mfcc(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
+def extract_mfcc(audio, sr, d=my_config.N_MFCC, length=my_config.MAX_LENGTH_MFCC):
     # Compute MFCC features with the desired number of coefficients (D)
-    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=d, hop_length=MFCC_HOP_LENGTH, n_fft=N_FTT)
+    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=d, hop_length=my_config.MFCC_HOP_LENGTH, n_fft=my_config.N_FTT)
 
     # Transpose MFCCs to shape (time_steps, D) to align with Conv2D input expectations
     mfccs_transposed = mfccs.T
@@ -56,7 +57,7 @@ def extract_mfcc(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
     return mfcc_features_padded
 
 
-def extract_logmel(audio, sr, n_mels=N_MELS, length=MEL_LENGTH, hop_length=MEL_HOP_LENGTH, n_fft=MEL_HOP_LENGTH):
+def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENGTH, hop_length=my_config.MEL_HOP_LENGTH, n_fft=my_config.MEL_HOP_LENGTH):
     # Compute log-mel spectrogram features
     melspectrogram = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=n_mels,
                                                     n_fft=n_fft, hop_length=hop_length)
