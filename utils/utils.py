@@ -2,6 +2,12 @@ from my_config import *
 from data_generator import DataGenerator
 
 
+def lr_scheduler(epoch, lr):
+    if epoch > 0 and epoch % EPOCHS_DROP == 0:
+        return lr * DECAY_FACTOR
+    return lr
+
+
 def create_datagenerator(extraction_function, train_filepath, dev_filepath, test_filepath, batch_size):
     # Create the appropriate DataGenerator based on extraction_function
     if extraction_function == extract_raw_audio:

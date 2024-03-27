@@ -18,7 +18,7 @@ import seaborn as sns
 
 from my_config import *
 from utils import audio_utils
-from data_generator import DataGenerator
+from utils import utils
 
 
 def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False, extraction_func=EXTRACTION_FUNCTION):
@@ -153,14 +153,13 @@ preprocess_and_save_features(
     extraction_func=EXTRACTION_FUNCTION
 )
 
-train_generator = DataGenerator('./processed_audio_features/train_features.h5', batch_size=BATCH_SIZE)
-dev_generator = DataGenerator('./processed_audio_features/dev_features.h5', batch_size=BATCH_SIZE)
-
-
-def lr_scheduler(epoch, lr):
-    if epoch > 0 and epoch % EPOCHS_DROP == 0:
-        return lr * DECAY_FACTOR
-    return lr
+train_generator, dev_generator, test_generator = utils.create_datagenerator(
+    EXTRACTION_FUNCTION,
+    './processed_audio_features/train_features.h5',
+    './processed_audio_features/dev_features.h5',
+    './processed_audio_features/test_features.h5',
+    BATCH_SIZE
+)
 
 
 # Define a generator function for your training dataset
@@ -241,7 +240,7 @@ hybrid_model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accura
 callbacks = [
     ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=10, min_lr=0.00001),
     EarlyStopping(monitor="val_loss", patience=10, verbose=1),
-    LearningRateScheduler(lr_scheduler)
+    LearningRateScheduler(utils.lr_scheduler)
 ]
 
 # Fit the model
@@ -278,9 +277,6 @@ def plot_history(history):
 
 
 plot_history(history)
-
-# Assuming `DataGenerator` is correctly implemented for loading test data
-test_generator = DataGenerator('./processed_audio_features/test_features.h5', batch_size=BATCH_SIZE)
 
 # Load the model if not already in memory
 # hybrid_model = keras.models.load_model('./model/my_model_3.keras')
