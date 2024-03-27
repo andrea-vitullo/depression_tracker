@@ -57,7 +57,38 @@ def extract_mfcc(audio, sr, d=my_config.N_MFCC, length=my_config.MAX_LENGTH_MFCC
     return mfcc_features_padded
 
 
-def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENGTH, hop_length=my_config.MEL_HOP_LENGTH, n_fft=my_config.MEL_HOP_LENGTH):
+def compute_global_mel_stats(file_paths):
+    all_mels = []
+    total_files = len(file_paths)
+    print(f"Starting computation of global Mel stats for {total_files} files.")
+
+    for i, file_path in enumerate(file_paths):
+        print(f"Processing file {i + 1}/{total_files}: {file_path}")
+        try:
+            audio, sr = librosa.load(file_path, sr=None)  # Load with the original sampling rate
+            melspectrogram = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=my_config.N_MELS,
+                                                            n_fft=my_config.MEL_N_FFT,
+                                                            hop_length=my_config.MEL_HOP_LENGTH)
+            logmelspec = librosa.power_to_db(melspectrogram)
+            all_mels.extend(logmelspec.flatten())  # Flatten and extend the list of melspectrograms
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+            continue  # Skip this file and move to the next
+
+    # Compute the global mean and standard deviation
+    global_mel_mean = np.mean(all_mels)
+    global_mel_std = np.std(all_mels)
+
+    print(f"Global Mel mean: {global_mel_mean}, Global Mel std: {global_mel_std}")
+
+    # Make sure to return these values
+    return global_mel_mean, global_mel_std
+
+
+def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENGTH,
+                   hop_length=my_config.MEL_HOP_LENGTH, n_fft=my_config.MEL_HOP_LENGTH,
+                   mean=None, std=None):
+
     # Compute log-mel spectrogram features
     melspectrogram = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=n_mels,
                                                     n_fft=n_fft, hop_length=hop_length)
@@ -66,19 +97,20 @@ def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENG
     # Transpose to shape (timesteps, features) to align with our expected model input shape
     logmelspec_transposed = logmelspec.T
 
-    # Scale features to have zero mean and unit variance
-    scaler = StandardScaler()
-    logmelspec_scaled = scaler.fit_transform(logmelspec_transposed)
+    # Normalize using pre-computed global mean and std
+    if mean is not None and std is not None:
+        logmelspec_normalized = (logmelspec_transposed - mean) / std
+    else:
+        raise ValueError("Global Mel mean and std have not been computed.")
 
     # Initialize a zero array with the target shape (L, D)
     logmel_padded = np.zeros((length, n_mels))
 
     # If the log-mel spectrogram is shorter than L frames, pad it with zeros
-    if logmelspec_transposed.shape[0] < length:
-        logmel_padded[:logmelspec_transposed.shape[0], :] = logmelspec_transposed
-    # If it's longer, we'll truncate it to fit
-    else:
-        logmel_padded = logmelspec_transposed[:length, :]
+    if logmelspec_normalized.shape[0] < length:
+        logmel_padded[:logmelspec_normalized.shape[0], :] = logmelspec_normalized
+    else:  # Truncate if it's longer
+        logmel_padded = logmelspec_normalized[:length, :]
 
     # Add an additional dimension to mimic a single-channel image for Conv2D
     logmel_padded = logmel_padded[..., np.newaxis]

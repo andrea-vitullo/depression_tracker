@@ -1,6 +1,8 @@
 import glob
 import h5py
 import numpy as np
+import os
+import librosa
 
 from my_config import *
 from data_generator import DataGenerator
@@ -62,3 +64,38 @@ def load_features(file_path):
             labels[i] = h5f[key].attrs['label']
 
         return audio_data, labels
+
+
+def compute_global_stats_from_test_data(audio_files_directory):
+    """
+    Computes the global mean and standard deviation from all test files.
+
+    Args:
+        audio_files_directory (str): Path to the directory containing test files.
+
+    Returns:
+        tuple: A tuple containing the global mean and standard deviation of the Mel spectrograms.
+    """
+
+    all_mel_specs = []
+
+    # Assuming audio files are in 'wav' format
+    audio_files = [f for f in os.listdir(audio_files_directory) if f.endswith('.wav')]
+
+    for audio_file in audio_files:
+        audio_file_path = os.path.join(audio_files_directory, audio_file)
+        audio, sr = librosa.load(audio_file_path, sr=None)  # Load audio at its native sampling rate
+
+        # Compute Mel spectrogram without applying dB conversion
+        mel_spec = librosa.feature.melspectrogram(y=audio, sr=sr)
+
+        all_mel_specs.append(mel_spec.flatten())
+
+    # Concatenate all mel spectrograms into a single 1D array
+    all_mel_specs_flat = np.concatenate(all_mel_specs)
+
+    # Calculate global mean and std
+    global_mean = np.mean(all_mel_specs_flat)
+    global_std = np.std(all_mel_specs_flat)
+
+    return global_mean, global_std
