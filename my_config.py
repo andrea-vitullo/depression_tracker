@@ -1,3 +1,6 @@
+from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
+
+
 # PATHS
 DIRECTORY = "/Users/andreavitullo/Desktop/DATABASE_TEST"
 AUDIO_TEST_DIRECTORY = "/Users/andreavitullo/Desktop/audio_test_DAIC-WOZ_DATABASE"
@@ -62,6 +65,10 @@ START_FORMAT = "AUDIO.wav"
 CLEANED_FORMAT = "cleaned.wav"
 FINAL_FORMAT = "Final.wav"
 SPLIT_FORMAT = "_SPLIT.wav"
+
+# EXTRACTION FUNCTION
+# [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
+EXTRACTION_FUNCTION = extract_raw_audio
 
 # MFCC PARAMETERS
 N_MFCC = 5

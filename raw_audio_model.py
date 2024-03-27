@@ -17,12 +17,11 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
 from my_config import *
-from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
 from utils import audio_utils
 from data_generator import DataGenerator
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False, extraction_func=extract_raw_audio):
+def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False, extraction_func=EXTRACTION_FUNCTION):
     output_dir = os.path.dirname(output_file_path)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -78,7 +77,6 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, augment=F
                     print(f"Augmented audio label: {binary_label}")
 
 
-
 # Define the number of augmented versions to generate for each depressed class sample
 male_non_depressed_augmentations = 0
 female_non_depressed_augmentations = 1
@@ -104,8 +102,6 @@ dev_labels = [0]*len(dev_files_male_nd) + [1]*len(dev_files_female_nd) + \
              [2]*len(dev_files_male_d) + [3]*len(dev_files_female_d)
 
 
-
-
 # Check first few labels
 for file, label in zip(train_files[:10], train_labels[:10]):
     print(f"File: {file}, Label: {label}")
@@ -122,8 +118,21 @@ from collections import Counter
 print(Counter(train_labels))
 print(Counter(dev_labels))
 
-preprocess_and_save_features(train_files, train_labels, './processed_audio_features/train_features.h5', augment=True)
-preprocess_and_save_features(dev_files, dev_labels, './processed_audio_features/dev_features.h5', augment=False)
+preprocess_and_save_features(
+    train_files,
+    train_labels,
+    './processed_audio_features/train_features_raw.h5',
+    augment=True,
+    extraction_func=EXTRACTION_FUNCTION
+)
+
+preprocess_and_save_features(
+    dev_files,
+    dev_labels,
+    './processed_audio_features/dev_features_raw.h5',
+    augment=False,
+    extraction_func=EXTRACTION_FUNCTION
+)
 
 train_generator = DataGenerator('./processed_audio_features/train_features.h5', batch_size=BATCH_SIZE)
 dev_generator = DataGenerator('./processed_audio_features/dev_features.h5', batch_size=BATCH_SIZE)
@@ -264,7 +273,13 @@ test_files = test_files_male_nd + test_files_female_nd + test_files_male_d + tes
 test_labels = [0]*len(test_files_male_nd) + [0]*len(test_files_female_nd) + \
               [1]*len(test_files_male_d) + [1]*len(test_files_female_d)
 
-preprocess_and_save_features(test_files, test_labels, './processed_audio_features/test_features.h5', augment=False)
+preprocess_and_save_features(
+    test_files,
+    test_labels,
+    './processed_audio_features/test_features.h5',
+    augment=False,
+    extraction_func=EXTRACTION_FUNCTION
+)
 
 # Assuming `DataGenerator` is correctly implemented for loading test data
 test_generator = DataGenerator('./processed_audio_features/test_features.h5', batch_size=BATCH_SIZE)
