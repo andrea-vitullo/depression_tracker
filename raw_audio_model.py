@@ -17,28 +17,9 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
 from my_config import *
+from features_extractors import extract_raw_audio
 from utils import audio_utils
 from data_generator import DataGenerator
-
-
-def extract_raw_audio(audio, sr, target_length=NSEG * H):
-    # If the audio's length is more than target_length, we truncate it
-    if len(audio) > target_length:
-        audio = audio[:target_length]
-    # If the audio's length is less than target_length, we pad it with zeros
-    elif len(audio) < target_length:
-        audio = np.concatenate([audio, np.zeros(target_length - len(audio))])
-
-    # Calculate mean and std
-    mean = np.mean(audio)
-    std = np.std(audio)
-
-    # Standardize audio data
-    audio = audio_utils.standardization(audio, mean, std)
-
-    print(audio.shape)
-
-    return audio
 
 
 def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False):
