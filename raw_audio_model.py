@@ -93,6 +93,12 @@ dev_files_female_nd = glob.glob(AUDIO_DEV_DIR_0 + '/female/*.wav')
 dev_files_male_d = glob.glob(AUDIO_DEV_DIR_1 + '/male/*.wav')  # depressed
 dev_files_female_d = glob.glob(AUDIO_DEV_DIR_1 + '/female/*.wav')
 
+# Load test files
+test_files_male_nd = glob.glob(AUDIO_TEST_DIR_0 + '/male/*.wav')
+test_files_female_nd = glob.glob(AUDIO_TEST_DIR_0 + '/female/*.wav')
+test_files_male_d = glob.glob(AUDIO_TEST_DIR_1 + '/male/*.wav')
+test_files_female_d = glob.glob(AUDIO_TEST_DIR_1 + '/female/*.wav')
+
 train_files = train_files_male_nd + train_files_female_nd + train_files_male_d + train_files_female_d
 train_labels = [0]*len(train_files_male_nd) + [1]*len(train_files_female_nd) + \
                [2]*len(train_files_male_d) + [3]*len(train_files_female_d)
@@ -100,6 +106,11 @@ train_labels = [0]*len(train_files_male_nd) + [1]*len(train_files_female_nd) + \
 dev_files = dev_files_male_nd + dev_files_female_nd + dev_files_male_d + dev_files_female_d
 dev_labels = [0]*len(dev_files_male_nd) + [1]*len(dev_files_female_nd) + \
              [2]*len(dev_files_male_d) + [3]*len(dev_files_female_d)
+
+# Assuming you have a test set ready similar to train and dev sets
+test_files = test_files_male_nd + test_files_female_nd + test_files_male_d + test_files_female_d
+test_labels = [0]*len(test_files_male_nd) + [0]*len(test_files_female_nd) + \
+              [1]*len(test_files_male_d) + [1]*len(test_files_female_d)
 
 
 # Check first few labels
@@ -130,6 +141,14 @@ preprocess_and_save_features(
     dev_files,
     dev_labels,
     './processed_audio_features/dev_features_raw.h5',
+    augment=False,
+    extraction_func=EXTRACTION_FUNCTION
+)
+
+preprocess_and_save_features(
+    test_files,
+    test_labels,
+    './processed_audio_features/test_features.h5',
     augment=False,
     extraction_func=EXTRACTION_FUNCTION
 )
@@ -259,27 +278,6 @@ def plot_history(history):
 
 
 plot_history(history)
-
-
-# Load test files
-test_files_male_nd = glob.glob(AUDIO_TEST_DIR_0 + '/male/*.wav')
-test_files_female_nd = glob.glob(AUDIO_TEST_DIR_0 + '/female/*.wav')
-test_files_male_d = glob.glob(AUDIO_TEST_DIR_1 + '/male/*.wav')
-test_files_female_d = glob.glob(AUDIO_TEST_DIR_1 + '/female/*.wav')
-
-
-# Assuming you have a test set ready similar to train and dev sets
-test_files = test_files_male_nd + test_files_female_nd + test_files_male_d + test_files_female_d
-test_labels = [0]*len(test_files_male_nd) + [0]*len(test_files_female_nd) + \
-              [1]*len(test_files_male_d) + [1]*len(test_files_female_d)
-
-preprocess_and_save_features(
-    test_files,
-    test_labels,
-    './processed_audio_features/test_features.h5',
-    augment=False,
-    extraction_func=EXTRACTION_FUNCTION
-)
 
 # Assuming `DataGenerator` is correctly implemented for loading test data
 test_generator = DataGenerator('./processed_audio_features/test_features.h5', batch_size=BATCH_SIZE)

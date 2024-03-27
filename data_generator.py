@@ -6,9 +6,10 @@ import gc
 
 class DataGenerator(Sequence):
     # noinspection PyMissingConstructor
-    def __init__(self, h5_filepath, batch_size):
+    def __init__(self, h5_filepath, batch_size, audio_shape):
         self.h5_filepath = h5_filepath
         self.batch_size = batch_size
+        self.audio_shape = audio_shape
         with h5py.File(self.h5_filepath, 'r') as f:
             self.num_samples = len(f.keys())
 
@@ -27,7 +28,12 @@ class DataGenerator(Sequence):
             for key in keys:
                 group = f[key]
                 audio = group['audio'][:]
+
+                # reshape audio to audio_shape
+                audio = audio.reshape(self.audio_shape)
+
                 label = group.attrs['label']
+
                 batch_x.append(audio)
                 batch_y.append(label)
 

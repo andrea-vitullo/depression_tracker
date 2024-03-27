@@ -22,7 +22,7 @@ def extract_raw_audio(audio, sr, target_length=NSEG * H):
 
     print(audio.shape)
 
-    return audio
+    return audio[:, np.newaxis]
 
 
 def extract_mfcc(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
