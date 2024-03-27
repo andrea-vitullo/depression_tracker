@@ -1,6 +1,7 @@
 import unittest
 import os
 import matplotlib.pyplot as plt
+from matplotlib.colors import Normalize
 import numpy as np
 import soundfile as sf
 
@@ -68,9 +69,11 @@ class FeatureExtractionTest(unittest.TestCase):
             if not os.path.exists(mfcc_output_directory):
                 os.makedirs(mfcc_output_directory)
 
+            norm = Normalize(vmin=np.min(mfcc_features_2d), vmax=np.max(mfcc_features_2d))
+
             # Plot the MFCC features as Heatmap and save the plot
             plt.figure(figsize=(10, 4))
-            plt.imshow(mfcc_features_2d.T, origin='lower', aspect='auto', cmap='viridis')
+            plt.imshow(mfcc_features_2d.T, origin='lower', aspect='auto', cmap='inferno', norm=norm)
             plt.title('MFCCs')
             plt.ylabel('MFCC coefficients')
             plt.xlabel('Time (frames)')

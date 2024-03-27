@@ -1,5 +1,6 @@
 import numpy as np
 import librosa
+from sklearn.preprocessing import StandardScaler
 
 from my_config import *
 from utils import audio_utils
@@ -31,6 +32,11 @@ def extract_mfcc(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
     # Transpose MFCCs to shape (time_steps, D) to align with Conv2D input expectations
     mfccs_transposed = mfccs.T
 
+    # Scale features to have zero mean and unit variance
+    scaler = StandardScaler()
+
+    mfccs_scaled = scaler.fit_transform(mfccs_transposed)
+
     # Initialize a zero array with the target shape (L, D)
     mfcc_features_padded = np.zeros((length, d))
 
@@ -58,6 +64,10 @@ def extract_logmel(audio, sr, n_mels=N_MELS, length=MEL_LENGTH, hop_length=MEL_H
 
     # Transpose to shape (timesteps, features) to align with our expected model input shape
     logmelspec_transposed = logmelspec.T
+
+    # Scale features to have zero mean and unit variance
+    scaler = StandardScaler()
+    logmelspec_scaled = scaler.fit_transform(logmelspec_transposed)
 
     # Initialize a zero array with the target shape (L, D)
     logmel_padded = np.zeros((length, n_mels))

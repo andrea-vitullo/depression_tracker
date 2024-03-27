@@ -17,12 +17,12 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
 from my_config import *
-from features_extractors import extract_raw_audio
+from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
 from utils import audio_utils
 from data_generator import DataGenerator
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False):
+def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False, extraction_func=extract_raw_audio):
     output_dir = os.path.dirname(output_file_path)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
@@ -38,7 +38,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, augment=F
                 padding = MAX_LENGTH - len(audio)
                 audio = np.pad(audio, (0, padding), 'constant')
 
-            audio_features_padded = extract_raw_audio(audio, sr)
+            audio_features_padded = extraction_func(audio, sr)
 
             # Map multi-class labels to binary labels here
             if label in [0, 1]:    # Non-depressed
