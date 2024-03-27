@@ -24,7 +24,7 @@ def extract_raw_audio(audio, sr, target_length=NSEG * H):
     return audio
 
 
-def extract_mfcc_features(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
+def extract_mfcc(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
     # Compute MFCC features with the desired number of coefficients (D)
     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=d, hop_length=MFCC_HOP_LENGTH, n_fft=N_FTT)
 
@@ -50,3 +50,28 @@ def extract_mfcc_features(audio, sr, d=N_MFCC, length=MAX_LENGTH_MFCC):
     return mfcc_features_padded
 
 
+def extract_logmel(audio, sr, n_mels=N_MELS, length=MEL_LENGTH, hop_length=MEL_HOP_LENGTH, n_fft=MEL_HOP_LENGTH):
+    # Compute log-mel spectrogram features
+    melspectrogram = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=n_mels,
+                                                    n_fft=n_fft, hop_length=hop_length)
+    logmelspec = librosa.power_to_db(melspectrogram)
+
+    # Transpose to shape (timesteps, features) to align with our expected model input shape
+    logmelspec_transposed = logmelspec.T
+
+    # Initialize a zero array with the target shape (L, D)
+    logmel_padded = np.zeros((length, n_mels))
+
+    # If the log-mel spectrogram is shorter than L frames, pad it with zeros
+    if logmelspec_transposed.shape[0] < length:
+        logmel_padded[:logmelspec_transposed.shape[0], :] = logmelspec_transposed
+    # If it's longer, we'll truncate it to fit
+    else:
+        logmel_padded = logmelspec_transposed[:length, :]
+
+    # Add an additional dimension to mimic a single-channel image for Conv2D
+    logmel_padded = logmel_padded[..., np.newaxis]
+
+    print(logmel_padded.shape)
+
+    return logmel_padded
