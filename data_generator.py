@@ -32,7 +32,7 @@ class DataGenerator(Sequence):
                 batch_y.append(label)
 
         result = {
-            "input_layer": np.array(batch_x)
+            "input_1": np.array(batch_x)
         }, np.array(batch_y)
 
         gc.collect()

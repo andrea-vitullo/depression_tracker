@@ -52,6 +52,7 @@ AUDIO_TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test"
 AUDIO_TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/non_depressed"
 AUDIO_TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/depressed"
 
+# AUDIO CONSTANTS
 SAMPLERATE = 16000
 MAX_LENGTH = 320000
 

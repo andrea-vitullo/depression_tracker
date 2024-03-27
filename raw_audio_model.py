@@ -29,12 +29,16 @@ def extract_raw_audio(audio, sr, target_length=NSEG * H):
     elif len(audio) < target_length:
         audio = np.concatenate([audio, np.zeros(target_length - len(audio))])
 
-    # Normalize audio data between 0 and 1
-    normalized_audio = audio_utils.min_max_normalization(audio)
+    # Calculate mean and std
+    mean = np.mean(audio)
+    std = np.std(audio)
 
-    print(normalized_audio.shape)
+    # Standardize audio data
+    audio = audio_utils.standardization(audio, mean, std)
 
-    return normalized_audio
+    print(audio.shape)
+
+    return audio
 
 
 def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False):
@@ -73,17 +77,17 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, augment=F
                     num_augmentations = male_depressed_augmentations + female_depressed_augmentations
 
                 for aug_index in range(num_augmentations):
-                    augmentation_type = random.choice(['noise', 'stretch', 'shift'])
+                    augmentation_type = random.choice(['noise'])
                     print(f"Augmentation type: {augmentation_type}")
 
                     if augmentation_type == 'noise':
                         augmented_audio = audio_utils.add_noise(audio)
-                    elif augmentation_type == 'stretch':
-                        stretch_rate = random.uniform(0.9, 1.1)
-                        augmented_audio = time_stretch(audio, rate=stretch_rate)
-                    elif augmentation_type == 'shift':
-                        n_steps = random.randint(-1, 1)
-                        augmented_audio = pitch_shift(audio, sr=sr, n_steps=n_steps)
+                    # elif augmentation_type == 'stretch':
+                        # stretch_rate = random.uniform(0.9, 1.1)
+                        # augmented_audio = time_stretch(audio, rate=stretch_rate)
+                    # elif augmentation_type == 'shift':
+                    #     n_steps = random.randint(-1, 1)
+                    #     augmented_audio = pitch_shift(audio, sr=sr, n_steps=n_steps)
 
                     augmented_mfcc_features = extract_raw_audio(augmented_audio, sr)
                     aug_grp = h5f.create_group(f"{i}_aug_{aug_index}")
@@ -95,10 +99,10 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, augment=F
 
 
 # Define the number of augmented versions to generate for each depressed class sample
-male_non_depressed_augmentations = 4
-female_non_depressed_augmentations = 8
-male_depressed_augmentations = 16
-female_depressed_augmentations = 16
+male_non_depressed_augmentations = 0
+female_non_depressed_augmentations = 1
+male_depressed_augmentations = 2
+female_depressed_augmentations = 2
 
 train_files_male_nd = glob.glob(AUDIO_TRAIN_DIR_0 + '/male/*.wav')  # non_depressed
 train_files_female_nd = glob.glob(AUDIO_TRAIN_DIR_0 + '/female/*.wav')
@@ -160,7 +164,7 @@ train_dataset = tf.data.Dataset.from_generator(
     train_gen,
     output_signature=(
         {
-            "input_layer": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
+            "input_1": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
         },
         tf.TensorSpec(shape=(BATCH_SIZE, NUM_CLASSES), dtype=tf.float32),
     ),
@@ -176,7 +180,7 @@ dev_dataset = tf.data.Dataset.from_generator(
     dev_gen,
     output_signature=(
         {
-            "input_layer": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
+            "input_1": tf.TensorSpec(shape=(BATCH_SIZE, NSEG * H, 1), dtype=tf.float32),
         },
         tf.TensorSpec(shape=(BATCH_SIZE, NUM_CLASSES), dtype=tf.float32),
     ),
@@ -187,9 +191,9 @@ dev_dataset = tf.data.Dataset.from_generator(
 audio_input = Input(shape=(NSEG * H, 1))
 
 # Conv1D layers
-conv1_audio = Conv1D(filters=128, kernel_size=100, strides=100, padding="same")(audio_input)
+conv1_audio = Conv1D(filters=128, kernel_size=512, strides=256, padding="same")(audio_input)
 conv1_audio = layers.BatchNormalization()(conv1_audio)
-conv1_audio = layers.Dropout(0.5)(conv1_audio)
+conv1_audio = layers.Dropout(0.6)(conv1_audio)
 
 # conv2_audio = Conv1D(filters=64, kernel_size=3, strides=1, padding="same")(conv1_audio)
 # conv2_audio = layers.BatchNormalization()(conv2_audio)
@@ -206,7 +210,7 @@ lstm_layer_3 = LSTM(128, return_sequences=False, dropout=0.5)(lstm_layer_1)
 # hybrid_output = layers.Dense(4, activation="softmax", kernel_regularizer=regularizers.l2(0.01))(lstm_layer_3)
 
 # Binary Output Layer
-hybrid_output = Dense(1, activation="sigmoid", kernel_regularizer=regularizers.l2(0.5))(lstm_layer_3)
+hybrid_output = Dense(1, activation="sigmoid", kernel_regularizer=regularizers.l2(0.7))(lstm_layer_3)
 
 hybrid_model = Model(inputs=audio_input, outputs=hybrid_output)
 
@@ -215,7 +219,7 @@ plot_model(hybrid_model, to_file='model_plot.png', show_shapes=True, show_layer_
 epochs = EPOCHS
 
 # Define optimizer
-opt = keras.optimizers.Adam(learning_rate=INITIAL_LEARNING_RATE)
+opt = keras.optimizers.legacy.Adam(learning_rate=INITIAL_LEARNING_RATE)
 
 # # Compile the model for multi-class
 # hybrid_model.compile(optimizer=opt,
@@ -285,7 +289,7 @@ preprocess_and_save_features(test_files, test_labels, './processed_audio_feature
 test_generator = DataGenerator('./processed_audio_features/test_features.h5', batch_size=BATCH_SIZE)
 
 # Load the model if not already in memory
-hybrid_model = keras.models.load_model('./model/my_model_3.keras')
+# hybrid_model = keras.models.load_model('./model/my_model_3.keras')
 
 # Make predictions on the test set using the generator
 predictions = hybrid_model.predict(test_generator)

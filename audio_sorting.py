@@ -38,7 +38,7 @@ def dataframe_iterator(dataframe, dir_0, dir_1):
         else:
             binary_value = int(row['PHQ8_Binary'])  # PHQ8 for train and dev -- PHQ for test
         gender_value = int(row['Gender'])
-        filename = f"{participant_id}_AUDIO.Final.wav"
+        filename = f"{participant_id}_Final.wav"
         source_file_path = os.path.join(source_dir, filename)
 
         file_utils.file_sorter(source_file_path, dir_0, dir_1, binary_value, gender_value, filename, source_file_path)
