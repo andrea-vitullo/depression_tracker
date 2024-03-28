@@ -4,9 +4,10 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 import numpy as np
 import soundfile as sf
+import random
 
 from my_config import *
-from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
+from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel, extract_logmel_segments
 from utils.utils import compute_global_stats_from_test_data
 
 
@@ -119,6 +120,44 @@ class FeatureExtractionTest(unittest.TestCase):
             plt.colorbar()
 
             plt.savefig(os.path.join(logmel_output_directory, f'{os.path.splitext(audio_file)[0]}_logmel_plot.png'))
+            plt.close()
+
+    def test_logmel_segments_extraction(self):
+
+        global_mean, global_std = compute_global_stats_from_test_data(AUDIO_TEST_DIRECTORY)
+
+        # Get a list of all .wav files in the audio test directory
+        audio_files = [f for f in os.listdir(AUDIO_TEST_DIRECTORY) if f.endswith('.wav')]
+
+        # Randomly select one audio file from the list
+        random_audio_file = random.choice(audio_files)
+        audio_file_path = os.path.join(AUDIO_TEST_DIRECTORY, random_audio_file)
+
+        # Load the selected audio file
+        audio, sr = sf.read(audio_file_path)
+
+        # Extract LogMel segments
+        logmel_segments = extract_logmel_segments(audio, sr, mean=global_mean, std=global_std)
+
+        # Select 5 continuous segments for visualization
+        selected_segments = logmel_segments[:5]
+
+        # Create LogMel segments output directory if not exists
+        logmel_segments_output_directory = os.path.join(AUDIO_TEST_DIRECTORY, 'logmel_segments_extraction')
+        if not os.path.exists(logmel_segments_output_directory):
+            os.makedirs(logmel_segments_output_directory)
+
+        # Plot each of the selected LogMel segments
+        for i, segment in enumerate(selected_segments):
+            plt.figure(figsize=(10, 4))
+            plt.imshow(segment.T, origin='lower', aspect='auto', cmap='viridis')
+            plt.title(f'LogMel Spectrogram Segment {i + 1}')
+            plt.ylabel('Mel Filterbanks')
+            plt.xlabel('Time (frames)')
+            plt.colorbar()
+
+            plt.savefig(os.path.join(logmel_segments_output_directory,
+                                     f'{os.path.splitext(random_audio_file)[0]}_logmel_segment_{i + 1}.png'))
             plt.close()
 
 

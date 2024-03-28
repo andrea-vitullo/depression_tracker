@@ -35,17 +35,46 @@ def create_datagenerator(extraction_function, train_filepath, dev_filepath, test
     return train_generator, dev_generator, test_generator
 
 
-def load_files_labels(directories, labels):
+# def load_files_labels(directories, labels):
+#     files = []
+#     label_list = []
+#
+#     for directory, label in zip(directories, labels):
+#         for gender in ['male', 'female']:
+#             gender_files = glob.glob(f"{directory}/{gender}/*.wav")
+#             files.extend(gender_files)
+#             label_list.extend([label] * len(gender_files))
+#
+#     return files, label_list
+
+
+def load_files_labels(base_dir):
     files = []
-    label_list = []
+    labels = []
 
-    for directory, label in zip(directories, labels):
-        for gender in ['male', 'female']:
-            gender_files = glob.glob(f"{directory}/{gender}/*.wav")
-            files.extend(gender_files)
-            label_list.extend([label] * len(gender_files))
+    # Define the patterns for directory scanning
+    patterns = ['non_depressed/male', 'non_depressed/female', 'depressed/male', 'depressed/female']
+    label_mapping = {
+        'non_depressed/male': 0,
+        'non_depressed/female': 1,
+        'depressed/male': 2,
+        'depressed/female': 3,
+    }
 
-    return files, label_list
+    print(f"Loading files from {base_dir}")
+
+    # Walk through the base directory
+    for pattern in patterns:
+        full_pattern = os.path.join(base_dir, pattern, '*.wav')
+        for file_path in glob.glob(full_pattern):
+            files.append(file_path)
+            labels.append(label_mapping[pattern])
+
+            print(f"Loaded {len(files)} files with labels: {set(labels)}")
+
+    print(f"Total loaded files: {len(files)}")
+
+    return files, labels
 
 
 def load_features(file_path):
