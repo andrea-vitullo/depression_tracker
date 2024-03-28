@@ -25,20 +25,20 @@ EXTRACTION_FUNCTION = extract_logmel
 
 
 # Define directory and label mappings
-AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0,
-                    my_config.AUDIO_TRAIN_DIR_0,
-                    my_config.AUDIO_TRAIN_DIR_1,
-                    my_config.AUDIO_TRAIN_DIR_1]
+AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0 + '/male',
+                    my_config.AUDIO_TRAIN_DIR_0 + '/female',
+                    my_config.AUDIO_TRAIN_DIR_1 + '/male',
+                    my_config.AUDIO_TRAIN_DIR_1 + '/female']
 
-AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0,
-                  my_config.AUDIO_DEV_DIR_0,
-                  my_config.AUDIO_DEV_DIR_1,
-                  my_config.AUDIO_DEV_DIR_1]
+AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0 + '/male',
+                  my_config.AUDIO_DEV_DIR_0 + '/female',
+                  my_config.AUDIO_DEV_DIR_1 + '/male',
+                  my_config.AUDIO_DEV_DIR_1 + '/female']
 
-AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0,
-                   my_config.AUDIO_TEST_DIR_0,
-                   my_config.AUDIO_TEST_DIR_1,
-                   my_config.AUDIO_TEST_DIR_1]
+AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0 + '/male',
+                   my_config.AUDIO_TEST_DIR_0 + '/female',
+                   my_config.AUDIO_TEST_DIR_1 + '/male',
+                   my_config.AUDIO_TEST_DIR_1 + '/female']
 
 
 # Load the data

@@ -8,12 +8,20 @@ from collections import Counter
 class LoadFilesLabelsTest(unittest.TestCase):
 
     def setUp(self):
-        self.AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_0, my_config.AUDIO_TRAIN_DIR_1,
-                                 my_config.AUDIO_TRAIN_DIR_1]
-        self.AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_0, my_config.AUDIO_DEV_DIR_1,
-                               my_config.AUDIO_DEV_DIR_1]
-        self.AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_0, my_config.AUDIO_TEST_DIR_1,
-                                my_config.AUDIO_TEST_DIR_1]
+        self.AUDIO_TRAIN_DIRS = [my_config.AUDIO_TRAIN_DIR_0 + '/male',
+                                 my_config.AUDIO_TRAIN_DIR_0 + '/female',
+                                 my_config.AUDIO_TRAIN_DIR_1 + '/male',
+                                 my_config.AUDIO_TRAIN_DIR_1 + '/female']
+
+        self.AUDIO_DEV_DIRS = [my_config.AUDIO_DEV_DIR_0 + '/male',
+                               my_config.AUDIO_DEV_DIR_0 + '/female',
+                               my_config.AUDIO_DEV_DIR_1 + '/male',
+                               my_config.AUDIO_DEV_DIR_1 + '/female']
+
+        self.AUDIO_TEST_DIRS = [my_config.AUDIO_TEST_DIR_0 + '/male',
+                                my_config.AUDIO_TEST_DIR_0 + '/female',
+                                my_config.AUDIO_TEST_DIR_1 + '/male',
+                                my_config.AUDIO_TEST_DIR_1 + '/female']
 
         # Load the data
         self.train_files, self.train_labels = utils.load_files_labels(self.AUDIO_TRAIN_DIRS, my_config.LABELS)
