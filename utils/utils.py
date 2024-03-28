@@ -49,6 +49,7 @@ def create_datagenerator(extraction_function, train_filepath, dev_filepath, test
 
 
 def load_files_labels(base_dir):
+
     files = []
     labels = []
 
@@ -78,6 +79,7 @@ def load_files_labels(base_dir):
 
 
 def load_features(file_path):
+
     with h5py.File(file_path, 'r') as h5f:
         # Let's assume we know the number of samples beforehand
         num_samples = len(h5f.keys())

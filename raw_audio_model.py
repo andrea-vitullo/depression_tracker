@@ -12,28 +12,25 @@ from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
 
 import my_config
-from my_config import LOGMEL_SHAPE, EPOCHS, BATCH_SIZE
+from my_config import LOGMEL_SHAPE_WINDOW, EPOCHS, BATCH_SIZE
 from utils import utils
 from features_extractors import extract_raw_audio, extract_mfcc, extract_logmel
 from preprocess import EXTRACTION_FUNCTION
 from data_generator import DataGenerator
 
 
-train_features, train_labels = utils.load_features('./processed_audio_features/train_features.h5')
-dev_features, dev_labels = utils.load_features('./processed_audio_features/dev_features.h5')
-test_features, test_labels = utils.load_features('./processed_audio_features/test_features.h5')
-
-
 train_generator = DataGenerator(
     './processed_audio_features/train_features.h5',
     batch_size=BATCH_SIZE,
-    audio_shape=LOGMEL_SHAPE
+    audio_shape=LOGMEL_SHAPE_WINDOW,
+    verbose=True
 )
 
 dev_generator = DataGenerator(
     './processed_audio_features/dev_features.h5',
     batch_size=BATCH_SIZE,
-    audio_shape=LOGMEL_SHAPE
+    audio_shape=LOGMEL_SHAPE_WINDOW,
+    verbose=True
 )
 
 
@@ -47,7 +44,7 @@ train_dataset = tf.data.Dataset.from_generator(
     train_gen,
     output_signature=(
         {
-            "input_1": tf.TensorSpec(shape=(None,) + LOGMEL_SHAPE, dtype=tf.float32),  # Adjust shape
+            "input_1": tf.TensorSpec(shape=(None,) + LOGMEL_SHAPE_WINDOW, dtype=tf.float32),  # Adjust shape
         },
         tf.TensorSpec(shape=(None,), dtype=tf.float32),  # Adjust shape for your labels
     ),
@@ -64,7 +61,7 @@ dev_dataset = tf.data.Dataset.from_generator(
     dev_gen,
     output_signature=(
         {
-            "input_1": tf.TensorSpec(shape=(None,) + LOGMEL_SHAPE, dtype=tf.float32),  # Adjust shape
+            "input_1": tf.TensorSpec(shape=(None,) + LOGMEL_SHAPE_WINDOW, dtype=tf.float32),  # Adjust shape
         },
         tf.TensorSpec(shape=(None,), dtype=tf.float32),  # Adjust shape for your labels
     ),
@@ -100,7 +97,7 @@ dev_dataset = tf.data.Dataset.from_generator(
 ######################################################################################################################
 
 # Input layer
-audio_input = Input(shape=LOGMEL_SHAPE)
+audio_input = Input(shape=LOGMEL_SHAPE_WINDOW)
 
 # Conv2D layer
 conv1_audio = Conv2D(filters=64, kernel_size=(40, 3), strides=(1, 1), padding="valid")(audio_input)

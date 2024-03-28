@@ -154,5 +154,8 @@ def extract_logmel_segments(audio, sr, n_mels=my_config.N_MELS, frame_length_sec
         # Append the processed log-mel spectrogram of the segment
         logmel_segments.append(logmelspec)
 
+    if logmel_segments:
+        print(f"Logmel segment shape: {logmel_segments[0].shape}")
+
     # At this point, logmel_segments contains a list of log-mel spectrogram segments for the input audio
     return logmel_segments
