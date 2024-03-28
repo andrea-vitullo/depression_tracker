@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 from keras import layers, Input, regularizers
-from keras.layers import Conv1D, Reshape, LSTM, Dense
+from keras.layers import Reshape, LSTM, Dense
 from keras.src.layers import Conv2D
 from keras.utils import plot_model
 from keras.models import Model
@@ -23,15 +23,6 @@ train_features, train_labels = utils.load_features('./processed_audio_features/t
 dev_features, dev_labels = utils.load_features('./processed_audio_features/dev_features.h5')
 test_features, test_labels = utils.load_features('./processed_audio_features/test_features.h5')
 
-# # Map each extraction function to its corresponding shape
-# EXTRACTION_SHAPE_MAP = {
-#     extract_raw_audio: my_config.RAW_SHAPE,
-#     extract_mfcc: my_config.MFCC_SHAPE,
-#     extract_logmel: my_config.LOGMEL_SHAPE,
-# }
-#
-# # Determine the current shape from EXTRACTION_FUNCTION
-# current_shape = EXTRACTION_SHAPE_MAP[EXTRACTION_FUNCTION]
 
 train_generator = DataGenerator(
     './processed_audio_features/train_features.h5',
@@ -112,24 +103,24 @@ dev_dataset = tf.data.Dataset.from_generator(
 audio_input = Input(shape=LOGMEL_SHAPE)
 
 # Conv2D layer
-conv1_audio = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding="valid")(audio_input)
+conv1_audio = Conv2D(filters=64, kernel_size=(40, 3), strides=(1, 1), padding="valid")(audio_input)
 conv1_audio = layers.BatchNormalization()(conv1_audio)
-conv1_audio = layers.Dropout(0.3)(conv1_audio)
+conv1_audio = layers.Dropout(0.7)(conv1_audio)
 
-# conv2_audio = Conv1D(filters=64, kernel_size=3, strides=1, padding="same")(conv1_audio)
-# conv2_audio = layers.BatchNormalization()(conv2_audio)
-# conv2_audio = layers.Dropout(0.5)(conv2_audio)
+conv2_audio = Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding="valid")(audio_input)
+conv2_audio = layers.BatchNormalization()(conv2_audio)
+conv2_audio = layers.Dropout(0.5)(conv2_audio)
 
-conv3_audio = Reshape((-1, 32))(conv1_audio)
+conv3_audio = Reshape((-1, 32))(conv2_audio)
 
 # LSTM layers
-lstm_layer_1 = LSTM(128, return_sequences=True, dropout=0.3)(conv3_audio)
-lstm_layer_2 = LSTM(128, return_sequences=True, dropout=0.3)(lstm_layer_1)
-lstm_layer_3 = LSTM(128, return_sequences=False, dropout=0.3)(lstm_layer_2)
+lstm_layer_1 = LSTM(128, return_sequences=True, dropout=0.5)(conv3_audio)
+# lstm_layer_2 = LSTM(128, return_sequences=True, dropout=0.4)(lstm_layer_1)
+lstm_layer_3 = LSTM(128, return_sequences=False, dropout=0.4)(lstm_layer_1)
 
 
 # Binary Output Layer
-hybrid_output = Dense(1, activation="sigmoid", kernel_regularizer=regularizers.l2(0.1))(lstm_layer_3)
+hybrid_output = Dense(1, activation="sigmoid", kernel_regularizer=regularizers.l2(0.01))(lstm_layer_3)
 
 
 hybrid_model = Model(inputs=audio_input, outputs=hybrid_output)
