@@ -50,8 +50,54 @@ test_files, test_labels = utils.load_files_labels(AUDIO_TEST_DIRS, LABELS)
 global_mel_mean, global_mel_std = compute_global_mel_stats(train_files)
 
 
+######################################################################################################################
+
+
+def balance_and_select_speakers(file_paths, labels, speaker_ids, num_speakers_per_category=31):
+    """
+    Selects an equal number of speakers for each category to ensure balanced representation.
+
+    Args:
+    - file_paths (list): List of all file paths.
+    - labels (list): Corresponding labels for each file path.
+    - speaker_ids (list): Unique identifier for each speaker in the file paths.
+    - num_speakers_per_category (int): Number of speakers to select per category.
+
+    Returns:
+    - Balanced file paths, labels, and speaker IDs.
+    """
+
+    from collections import defaultdict
+    category_speakers = defaultdict(list)
+
+    # Map each speaker to their category
+    for file_path, label, speaker_id in zip(file_paths, labels, speaker_ids):
+        category_speakers[label].append(speaker_id)
+
+    selected_file_paths = []
+    selected_labels = []
+    selected_speaker_ids = []
+
+    # For each category, randomly select `num_speakers_per_category`
+    for label, speakers in category_speakers.items():
+        selected_speakers = np.random.choice(speakers, num_speakers_per_category, replace=False)
+
+        # Filter the original lists to include only selected speakers
+        for file_path, label, speaker_id in zip(file_paths, labels, speaker_ids):
+            if speaker_id in selected_speakers:
+                selected_file_paths.append(file_path)
+                selected_labels.append(label)
+                selected_speaker_ids.append(speaker_id)
+
+    return selected_file_paths, selected_labels, selected_speaker_ids
+
+
+######################################################################################################################
+
+
 def preprocess_and_save_features(file_paths, labels, output_file_path, augment=False,
                                  extraction_func=EXTRACTION_FUNCTION, mean=None, std=None):
+
     output_dir = os.path.dirname(output_file_path)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
