@@ -32,15 +32,25 @@ class DataGenerator(Sequence):
             for key in keys:
                 group = f[key]
                 audio = group['audio'][:]
-                label = group.attrs['label']
+
+                original_label = group.attrs['label']
+                transformed_label = 0 if original_label in [0, 1] else 1
 
                 # Error handling to catch issues with specific files
                 try:
-                    audio = audio.reshape(self.audio_shape)
-                    batch_x.append(audio)
-                    batch_y.append(label)
+                    # Check if audio shape matches the expected shape when flattened
+                    expected_size = np.prod(self.audio_shape)
+
+                    if audio.size == expected_size:
+                        audio = audio.reshape(self.audio_shape)
+                        batch_x.append(audio)
+                        batch_y.append(transformed_label)
+                    else:
+                        print(f"Skipping {key}: incompatible shape {audio.shape}, expected {self.audio_shape}")
+
                     if self.verbose:
-                        logging.info(f"Processed {key}: shape {audio.shape}, label {label}")
+                        logging.info(f"Processed {key}: shape {audio.shape}, label {transformed_label}")
+
                 except Exception as e:
                     logging.error(f"Error processing {key}: {e}")
 
