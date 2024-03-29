@@ -1,10 +1,11 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 from keras import layers, Input, regularizers
-from keras.layers import Input, Conv1D, MaxPooling1D, LSTM, Dense, Activation, MaxPooling2D, Conv2D, Flatten
+from keras.layers import Input, Conv1D, MaxPooling1D, LSTM, Dense, Activation, MaxPooling2D, Conv2D, Flatten, GlobalAveragePooling2D, TimeDistributed, Reshape, Dropout, BatchNormalization
 from keras.utils import plot_model
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, LearningRateScheduler
+from keras import backend as K
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report
 import seaborn as sns
@@ -83,20 +84,41 @@ s = 2    # Stride for max-pooling
 
 
 # Input layer
-audio_input = Input(shape=(LOGMEL_SHAPE_WINDOW))
+audio_input = Input(shape=(*LOGMEL_SHAPE_WINDOW, 1))
 
 # Conv2D Layer
-conv1 = Conv1D(filters=6, kernel_size=3, strides=1, padding='same', activation='relu')(audio_input)
-conv1 = layers.Dropout(0.4)(conv1)
+conv1 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
+conv2 = Conv2D(filters=64, kernel_size=(20, 3), strides=(1, 1), padding='same')(conv1)
+# conv1 = Dropout(0.2)(conv1)
 
 
 # MaxPooling2D Layer
-max_pool1 = MaxPooling1D(pool_size=3, strides=3, padding='same')(conv1)
+max_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='valid')(conv2)
 
-# Flatten and Fully Connected Layers as before
-flatten = Flatten()(max_pool1)
-fc1 = Dense(units=128, activation='relu')(flatten)
-output = Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.01))(fc1)
+
+# Preparing for LSTM
+# flattened = Flatten()(max_pool1)
+
+
+# reshaped = layers.Reshape((13, -1))(max_pool1)
+
+# Assuming max_pool1 has shape (batch_size, height, width, channels)
+batch_size, height, width, channels = K.int_shape(max_pool1)
+reshaped = layers.Reshape((height, width * channels))(max_pool1)
+
+# LSTM layers
+# LSTM Layer
+lstm_layer_1 = LSTM(128, return_sequences=True)(reshaped)  # Single LSTM layer
+lstm_layer_2 = LSTM(128, return_sequences=True)(lstm_layer_1)
+lstm_layer_3 = LSTM(128, return_sequences=False)(lstm_layer_2)
+
+# # Flatten and Fully Connected Layers as before
+# flatten = Flatten()(max_pool1)
+# fc1 = Dense(units=128, activation='relu')(flatten)
+
+# , kernel_regularizer=regularizers.l2(0.01)
+
+output = Dense(1, activation='sigmoid')(lstm_layer_3)
 
 model = Model(inputs=audio_input, outputs=output)
 

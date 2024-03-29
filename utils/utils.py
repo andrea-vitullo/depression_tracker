@@ -130,3 +130,20 @@ def compute_global_stats_from_test_data(audio_files_directory):
     global_std = np.std(all_mel_specs_flat)
 
     return global_mean, global_std
+
+
+# Replace 'your_file.h5' with the path to your actual HDF5 file
+file_path = './processed_audio_features/dev_features.h5'
+
+# Open the HDF5 file
+with h5py.File(file_path, 'r') as file:
+    # List all groups (akin to directories in a filesystem)
+    print("Keys: %s" % file.keys())
+    # A group in HDF5 is like a directory, letting you organize data
+    # Replace 'dataset_name' with the actual name of your dataset within the HDF5 file
+    dataset_name = 'dataset_name'
+    if dataset_name in file:
+        data = file[dataset_name][:]
+        print(data)
+    else:
+        print(f"Dataset '{dataset_name}' not found in file.")

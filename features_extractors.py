@@ -120,44 +120,53 @@ def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENG
     return logmel_padded
 
 
-def extract_logmel_segments(audio, sr, n_mels=my_config.N_MELS, n_fft=my_config.MEL_N_FFT, mean=None, std=None):
-    # Calculate the number of samples for the frame length and hop length
-    frame_length_samples = 1024  # 64ms window length in samples at 16kHz
-    hop_length_samples = 512  # 32ms hop length in samples at 16kHz
+import librosa
+import numpy as np
 
-    # Calculate the total number of frames that can be extracted from the audio with the specified hop length
-    num_segments = 1 + (len(audio) - frame_length_samples) // hop_length_samples
 
-    # List to hold all the log-mel spectrogram segments
+def extract_logmel_segments(audio, sr, n_mels=40, n_fft=512, hop_length=512, mean=None, std=None):
+    # The length of each segment in samples to fit exactly 120 frames
+    segment_length_samples = 61440  # 61,440 samples to fit the requirement
+
+    # Calculate the total number of segments that can be extracted from the audio
+    num_segments = len(audio) // segment_length_samples
+
     logmel_segments = []
 
     for i in range(num_segments):
-        # Starting index of the current segment
-        start_sample = i * hop_length_samples
-        end_sample = start_sample + frame_length_samples
+        # Calculate the start and end sample indices for the current segment
+        start_sample = i * segment_length_samples
+        end_sample = start_sample + segment_length_samples
 
-        # Extract the current segment from the audio
+        # Extract the segment from the audio
         segment = audio[start_sample:end_sample]
 
-        # Compute log-mel spectrogram for the current segment
+        # Compute the mel spectrogram for the current segment
         melspectrogram = librosa.feature.melspectrogram(segment, sr=sr, n_mels=n_mels, n_fft=n_fft,
-                                                        hop_length=hop_length_samples)
+                                                        hop_length=hop_length)
+
+        # Convert the power spectrogram to decibel units
         logmelspec = librosa.power_to_db(melspectrogram)
 
-        # Normalize if mean and std are provided
+        # Normalize the log-mel spectrogram if mean and std are provided
         if mean is not None and std is not None:
             logmelspec = (logmelspec - mean) / std
 
-        # Transpose the spectrogram to have time along the rows and Mel bands along the columns
+        # Optional: Subtract the mean of each mel frequency bin from all frames (mean normalization per bin)
+        logmelspec -= np.mean(logmelspec, axis=1, keepdims=True)
+
+        # Trim the last time frame if the spectrogram shape exceeds the expected frame count
+        if logmelspec.shape[1] > 120:
+            logmelspec = logmelspec[:, :120]
+
+        # # Transpose the spectrogram
         # logmelspec = logmelspec.T
 
-        # Subtract the mean of each coefficient from all frames (Segment-wise mean normalization)
-        logmelspec -= np.mean(logmelspec, axis=0)
-
-            # Append the processed log-mel spectrogram of the segment
+        # Append the processed log-mel spectrogram segment to the list
         logmel_segments.append(logmelspec)
 
+    # Optionally, you could print the shape of one segment to verify the dimensions
     if logmel_segments:
-        print(f"Logmel segment shape: {logmel_segments[0].shape}")
+        print(f"One log-mel segment shape: {logmel_segments[0].shape} (Expected: (40, 120))")
 
     return logmel_segments
