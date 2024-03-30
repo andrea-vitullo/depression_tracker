@@ -21,6 +21,11 @@ AUDIO_TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test"
 AUDIO_TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/non_depressed"
 AUDIO_TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/depressed"
 
+#  h5 DIRECTORIES
+TRAIN_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_features.h5'
+DEV_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_features.h5'
+TEST_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_features.h5'
+
 # AUDIO CONSTANTS
 SAMPLERATE = 16000
 MAX_LENGTH = 160000
@@ -61,10 +66,10 @@ RAW_SHAPE = (NSEG * H, 1)
 
 # NN PARAMETERS
 EPOCHS = 200
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 NUM_CLASSES = 2  # 4 for multiclass
 N_CHANNELS = 1
 
 INITIAL_LEARNING_RATE = 0.0015
 DECAY_FACTOR = 0.9
-EPOCHS_DROP = 15  # or 3
+EPOCHS_DROP = 5  # or 3

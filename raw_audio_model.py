@@ -76,24 +76,31 @@ dev_dataset = tf.data.Dataset.from_generator(
 )
 
 
-# Configuration parameters
-F0 = 40  # Frequency dimension
-T0 = 126  # Temporal dimension
-k = 2    # Kernel size for max-pooling
-s = 2    # Stride for max-pooling
-
-
 # Input layer
 audio_input = Input(shape=(*LOGMEL_SHAPE_WINDOW, 1))
 
 # Conv2D Layer
-conv1 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
-conv2 = Conv2D(filters=64, kernel_size=(20, 3), strides=(1, 1), padding='same')(conv1)
+conv1 = Conv2D(filters=16, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
+conv1 = BatchNormalization()(conv1)
+conv1 = Activation('relu')(conv1)
+
+conv2 = Conv2D(filters=32, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv1)
+conv2 = BatchNormalization()(conv2)
+conv2 = Activation('relu')(conv2)
+
+conv3 = Conv2D(filters=64, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv2)
+conv3 = BatchNormalization()(conv3)
+conv3 = Activation('relu')(conv3)
+
+conv4 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv3)
+conv4 = BatchNormalization()(conv4)
+conv4 = Activation('relu')(conv4)
+
 # conv1 = Dropout(0.2)(conv1)
 
 
 # MaxPooling2D Layer
-max_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='valid')(conv2)
+max_pool1 = MaxPooling2D(pool_size=(4, 3), strides=(3, 3), padding='valid')(conv4)
 
 
 # Preparing for LSTM
@@ -106,19 +113,14 @@ max_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='valid')(conv
 batch_size, height, width, channels = K.int_shape(max_pool1)
 reshaped = layers.Reshape((height, width * channels))(max_pool1)
 
+
 # LSTM layers
-# LSTM Layer
 lstm_layer_1 = LSTM(128, return_sequences=True)(reshaped)  # Single LSTM layer
 lstm_layer_2 = LSTM(128, return_sequences=True)(lstm_layer_1)
 lstm_layer_3 = LSTM(128, return_sequences=False)(lstm_layer_2)
 
-# # Flatten and Fully Connected Layers as before
-# flatten = Flatten()(max_pool1)
-# fc1 = Dense(units=128, activation='relu')(flatten)
 
-# , kernel_regularizer=regularizers.l2(0.01)
-
-output = Dense(1, activation='sigmoid')(lstm_layer_3)
+output = Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.01))(lstm_layer_3)
 
 model = Model(inputs=audio_input, outputs=output)
 

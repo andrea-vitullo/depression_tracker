@@ -120,10 +120,6 @@ def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENG
     return logmel_padded
 
 
-import librosa
-import numpy as np
-
-
 def extract_logmel_segments(audio, sr, n_mels=40, n_fft=512, hop_length=512, mean=None, std=None):
     # The length of each segment in samples to fit exactly 120 frames
     segment_length_samples = 61440  # 61,440 samples to fit the requirement
