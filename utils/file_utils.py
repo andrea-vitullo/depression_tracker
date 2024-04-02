@@ -94,3 +94,5 @@ def file_sorter(file_path, dir_0, dir_1, binary_value, gender_value, filename, s
         print(f'Moved file: {filename} to {dest_dir}\n')
     else:
         print(f'File not found: {source_file_path}\n')
+
+wave_mover()

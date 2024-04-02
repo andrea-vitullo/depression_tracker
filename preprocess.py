@@ -133,7 +133,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
                         # print(
                         #     f"Saved segment {i + 1}/{len(segments)} for speaker ID {speaker_id}, class {class_label}.")
 
-    print(f"Data preprocessed and saved to {output_file_path} with balanced speakers across classes.")
+    print(f"Data preprocessed and saved to {output_file_path} with balanced speakers across classes.\n")
 
     # Print the counts for each label
     for label, count in label_counters.items():

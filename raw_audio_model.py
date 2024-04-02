@@ -1,6 +1,6 @@
 import tensorflow as tf
 import tensorflow.keras as keras
-from keras import layers, Input, regularizers
+from keras import layers, regularizers
 from keras.layers import Input, Conv1D, MaxPooling1D, LSTM, Dense, Activation, MaxPooling2D, Conv2D, Flatten, GlobalAveragePooling2D, TimeDistributed, Reshape, Dropout, BatchNormalization
 from keras.utils import plot_model
 from keras.models import Model
@@ -21,16 +21,15 @@ from data_generator import DataGenerator
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-
 train_generator = DataGenerator(
-    './processed_audio_features/train_features.h5',
+    my_config.TRAIN_H5,
     batch_size=BATCH_SIZE,
     audio_shape=LOGMEL_SHAPE_WINDOW,
     verbose=False
 )
 
 dev_generator = DataGenerator(
-    './processed_audio_features/dev_features.h5',
+    my_config.DEV_H5,
     batch_size=BATCH_SIZE,
     audio_shape=LOGMEL_SHAPE_WINDOW,
     verbose=False
@@ -80,27 +79,19 @@ dev_dataset = tf.data.Dataset.from_generator(
 audio_input = Input(shape=(*LOGMEL_SHAPE_WINDOW, 1))
 
 # Conv2D Layer
-conv1 = Conv2D(filters=16, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
+conv1 = Conv2D(filters=256, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
 conv1 = BatchNormalization()(conv1)
 conv1 = Activation('relu')(conv1)
 
-conv2 = Conv2D(filters=32, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv1)
+conv2 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv1)
 conv2 = BatchNormalization()(conv2)
 conv2 = Activation('relu')(conv2)
 
-conv3 = Conv2D(filters=64, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv2)
-conv3 = BatchNormalization()(conv3)
-conv3 = Activation('relu')(conv3)
-
-conv4 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv3)
-conv4 = BatchNormalization()(conv4)
-conv4 = Activation('relu')(conv4)
-
-# conv1 = Dropout(0.2)(conv1)
+conv2 = Dropout(0.3)(conv2)
 
 
 # MaxPooling2D Layer
-max_pool1 = MaxPooling2D(pool_size=(4, 3), strides=(3, 3), padding='valid')(conv4)
+max_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='valid')(conv2)
 
 
 # Preparing for LSTM
@@ -130,7 +121,7 @@ plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=T
 
 opt = keras.optimizers.legacy.Adam(learning_rate=my_config.INITIAL_LEARNING_RATE)
 
-model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+# model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 
 # Model summary
@@ -145,7 +136,7 @@ callbacks = [
 
 epochs = EPOCHS
 
-history = model.fit(train_dataset, epochs=epochs, validation_data=dev_dataset, callbacks=callbacks, verbose=1)
+# history = model.fit(train_dataset, epochs=epochs, validation_data=dev_dataset, callbacks=callbacks, verbose=1)
 
 
 ######################################################################################################################
