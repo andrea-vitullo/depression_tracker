@@ -289,7 +289,54 @@ def extract_spectrogram_segments(audio, sr, n_fft=1024, hop_length=512):
 
     # Optionally, you could print the shape of one segment to verify the dimensions
     if spectrogram_segments:
-        print(
-            f"One spectrogram segment shape: {spectrogram_segments[0].shape} (Expected: (120, {n_fft // 2 + 1}))")  # n_fft//2 + 1 is the number of unique STFT bins
+        # n_fft//2 + 1 is the number of unique STFT bins
+        print(f"One spectrogram segment shape: {spectrogram_segments[0].shape} (Expected: (120, {n_fft // 2 + 1}))")
 
     return spectrogram_segments
+
+
+def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=512):
+    # The length of each segment in samples to fit exactly 120 frames
+    segment_length_samples = 61440  # 61,440 samples to fit the requirement
+
+    # Calculate the total number of segments that can be extracted from the audio
+    num_segments = len(audio) // segment_length_samples
+
+    chroma_segments = []
+
+    for i in range(num_segments):
+        # Calculate the start and end sample indices for the current segment
+        start_sample = i * segment_length_samples
+        end_sample = start_sample + segment_length_samples
+
+        # Extract the segment from the audio
+        segment = audio[start_sample:end_sample]
+
+        # Compute the chroma feature for the current segment
+        chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length)
+
+        # Transpose the chroma matrix
+        chroma_transposed = chroma.T
+
+        # Calculate mean and std for each segment for normalization
+        mean = np.mean(chroma_transposed)
+        std = np.std(chroma_transposed)
+
+        # Normalize the chroma features for the segment
+        chroma_normalized = (chroma_transposed - mean) / (std + 1e-8)
+
+        # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
+        chroma_normalized -= np.mean(chroma_normalized, axis=0, keepdims=True)
+
+        # Trim the last time frame if chroma shape exceeds the expected frame count
+        if chroma_normalized.shape[0] > 120:
+            chroma_normalized = chroma_normalized[:120, :]
+
+        # Append the processed, normalized chroma segment to the list
+        chroma_segments.append(chroma_normalized)
+
+    # Optionally, you can check the shape of one segment to verify the dimensions
+    if chroma_segments:
+        print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 12))")  # 12 chroma features
+
+    return chroma_segments

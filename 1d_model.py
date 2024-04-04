@@ -45,26 +45,27 @@ data_loader = DataLoader(my_config.TRAIN_H5, my_config.DEV_H5, my_config.TEST_H5
 audio_input = Input(shape=LOGMEL_SHAPE_WINDOW)
 
 # Conv2D Layer
-conv1 = Conv1D(filters=64, kernel_size=100, strides=1, padding='valid')(audio_input)
+conv1 = Conv1D(filters=128, kernel_size=120, strides=1, padding='valid')(audio_input)
 # conv1 = squeeze_excite_block(conv1)
 # conv1 = Activation('relu')(conv1)
 
 conv1 = Dropout(0.5)(conv1)
 
-conv2 = Conv1D(filters=128, kernel_size=20, strides=1, padding='valid')(conv1)
+# conv2 = Conv1D(filters=128, kernel_size=20, strides=1, padding='valid')(conv1)
 # conv2 = squeeze_excite_block(conv2)
 # # conv2 = Activation('relu')(conv2)
 
-conv2 = Dropout(0.5)(conv2)
+# conv2 = Dropout(0.5)(conv2)
 
 # MaxPooling2D Layer
-max_pool1 = MaxPooling1D(pool_size=1, strides=1, padding='valid')(conv2)
+max_pool1 = MaxPooling1D(pool_size=1, strides=1, padding='valid')(conv1)
 
 reshape = layers.Reshape((-1, 1))(max_pool1)
 
 # Add the GRU layer
 gru = layers.GRU(128, return_sequences=True, dropout=0.5)(reshape)
-gru2 = layers.GRU(128, return_sequences=True, dropout=0.5)(gru)
+gru1 = layers.GRU(128, return_sequences=True, dropout=0.5)(gru)
+gru2 = layers.GRU(128, return_sequences=True, dropout=0.5)(gru1)
 gru3 = layers.GRU(128, return_sequences=True, dropout=0.5)(gru2)
 gru4 = layers.LSTM(64, return_sequences=True, dropout=0.5)(gru3)
 gru5 = layers.LSTM(64, return_sequences=False, dropout=0.5)(gru4)

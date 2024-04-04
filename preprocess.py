@@ -70,8 +70,7 @@ def balance_and_select_speakers(file_paths, labels, speaker_ids, num_speakers_pe
 ######################################################################################################################
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, extraction_func, mean=None, std=None,
-                                 optimum_segments=5999, speakers_per_class=None):
+def preprocess_and_save_features(file_paths, labels, output_file_path, extraction_func, speakers_per_class=None):
 
     # Initialize counters for depressed/non-depressed segments
     label_counters = defaultdict(int)
@@ -121,7 +120,6 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
                     audio, sr = librosa.load(file_path, sr=None)
 
                     print(f"Extracting segments from {file_path}...")
-                    # segments = extraction_func(audio, sr, mean=mean, std=std)  #[:optimum_segments]
                     segments = extraction_func(audio, sr)
                     for i, segment in enumerate(segments):
                         grp_name = f"{speaker_id}_{class_label}_{i}"
@@ -170,6 +168,6 @@ preprocess_and_save_features(
     './processed_audio_features/test_features.h5',
     # augment=False,
     extraction_func=EXTRACTION_FUNCTION,
-    mean=global_mel_mean,
-    std=global_mel_std
+    # mean=global_mel_mean,
+    # std=global_mel_std
 )
