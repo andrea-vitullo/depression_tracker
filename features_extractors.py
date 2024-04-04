@@ -49,22 +49,22 @@ def extract_mfcc_segments(audio, sr, n_mels=40, n_fft=1024, hop_length=512, n_mf
         # Transpose the MFCCs matrix
         mfccs_transposed = mfccs.T
 
-        # Calculate mean and std for each segment for normalization
-        mean = np.mean(mfccs_transposed)
-        std = np.std(mfccs_transposed)
-
-        # Normalize the mfccs for the segment
-        mfccs_normalized = (mfccs_transposed - mean) / (std + 1e-8)
+        # # Calculate mean and std for each segment for normalization
+        # mean = np.mean(mfccs_transposed)
+        # std = np.std(mfccs_transposed)
+        #
+        # # Normalize the mfccs for the segment
+        # mfccs_normalized = (mfccs_transposed - mean) / (std + 1e-8)
 
         # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
-        mfccs_normalized -= np.mean(mfccs_normalized, axis=0, keepdims=True)
+        mfccs_transposed -= np.mean(mfccs_transposed, axis=0, keepdims=True)
 
         # Trim the last time frame if mfcc shape exceeds the expected frame count
-        if mfccs_normalized.shape[0] > 120:
-            mfccs_normalized = mfccs_normalized[:120, :]
+        if mfccs_transposed.shape[0] > 120:
+            mfccs_transposed = mfccs_transposed[:120, :]
 
         # Append the processed, normalized MFCC segment to the list
-        mfcc_segments.append(mfccs_normalized)
+        mfcc_segments.append(mfccs_transposed[:120])
 
     # Optionally, you can check the shape of one segment to verify the dimensions
     if mfcc_segments:
