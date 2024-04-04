@@ -7,13 +7,20 @@ from collections import defaultdict
 
 import my_config
 from utils import utils
-from features_extractors import extract_logmel_segments, compute_global_mel_stats, extract_spectrogram_segments
+import features_extractors
 
 
 # EXTRACTION FUNCTION
 # [extract_raw_audio, extract_mfcc_segments, extract_logmel_segments, extract_spectrogram_segments]
 # based on extraction type to perform import from features_extractors
-EXTRACTION_FUNCTION = extract_spectrogram_segments
+# Define extraction functions
+EXTRACTION_FUNCTIONS = {
+    'mfcc': features_extractors.extract_mfcc_segments,
+    'chroma': features_extractors.extract_chroma_segments,
+    'logmel': features_extractors.extract_logmel_segments,
+    'spectrogram': features_extractors.extract_spectrogram_segments,
+    # acdd other feature extractors here, if you have any
+}
 
 
 # Load the data
@@ -22,7 +29,15 @@ dev_files, dev_labels = utils.load_files_labels(my_config.AUDIO_DEV_DIR)
 test_files, test_labels = utils.load_files_labels(my_config.AUDIO_TEST_DIR)
 
 
-global_mel_mean, global_mel_std = compute_global_mel_stats(train_files)
+# Define datasets
+datasets = {
+    'train': (train_files, train_labels),
+    'dev': (dev_files, dev_labels),
+    'test': (test_files, test_labels),
+}
+
+
+global_mel_mean, global_mel_std = features_extractors.compute_global_mel_stats(train_files)
 
 
 ######################################################################################################################

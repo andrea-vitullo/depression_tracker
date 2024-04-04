@@ -1,6 +1,7 @@
 import numpy as np
 import librosa
 from sklearn.preprocessing import StandardScaler
+import warnings
 
 import my_config
 from utils import audio_utils
@@ -215,22 +216,22 @@ def extract_logmel_segments(audio, sr, n_mels=40, n_fft=1024, hop_length=512):
         logmelspec_transposed = logmelspec.T
 
         # Calculate mean and std for each segment for normalization
-        mean = np.mean(logmelspec_transposed)
-        std = np.std(logmelspec_transposed)
-
-        # Normalize the log-mel spectrogram for the segment
-        logmelspec_normalized = (logmelspec_transposed - mean) / (std + 1e-8)  # 1e-8 is just a very small number and it's often called epsilon in machine learning context.
+        # mean = np.mean(logmelspec_transposed)
+        # std = np.std(logmelspec_transposed)
+        #
+        # # Normalize the log-mel spectrogram for the segment
+        # logmelspec_normalized = (logmelspec_transposed - mean) / (std + 1e-8)  # 1e-8 is just a very small number and it's often called epsilon in machine learning context.
 
         # Optional: Subtract the mean of each mel frequency bin from all frames (mean normalization per bin)
         # This step is done after segment-wise normalization to ensure each bin's relative level is maintained
-        logmelspec_normalized -= np.mean(logmelspec_normalized, axis=1, keepdims=True)
+        logmelspec_transposed -= np.mean(logmelspec_transposed, axis=1, keepdims=True)
 
         # Trim the last time frame if the spectrogram shape exceeds the expected frame count
-        if logmelspec_normalized.shape[0] > 120:
-            logmelspec_normalized = logmelspec_normalized[:120, :]
+        if logmelspec_transposed.shape[0] > 120:
+            logmelspec_transposed = logmelspec_transposed[:120, :]
 
         # Append the processed, normalized log-mel spectrogram segment to the list
-        logmel_segments.append(logmelspec_normalized)
+        logmel_segments.append(logmelspec_transposed)
 
     # Optionally, you could print the shape of one segment to verify the dimensions
     if logmel_segments:
@@ -312,28 +313,29 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=512):
         # Extract the segment from the audio
         segment = audio[start_sample:end_sample]
 
-        # Compute the chroma feature for the current segment
-        chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length)
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=np.ComplexWarning)
+            chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length)
 
-        # Transpose the chroma matrix
-        chroma_transposed = chroma.T
+            # Transpose the chroma matrix
+            chroma_transposed = chroma.T
 
-        # Calculate mean and std for each segment for normalization
-        mean = np.mean(chroma_transposed)
-        std = np.std(chroma_transposed)
+            # # Calculate mean and std for each segment for normalization
+            # mean = np.mean(chroma_transposed)
+            # std = np.std(chroma_transposed)
+            #
+            # # Normalize the chroma features for the segment
+            # chroma_normalized = (chroma_transposed - mean) / (std + 1e-8)
 
-        # Normalize the chroma features for the segment
-        chroma_normalized = (chroma_transposed - mean) / (std + 1e-8)
+            # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
+            chroma_transposed -= np.mean(chroma_transposed, axis=0, keepdims=True)
 
-        # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
-        chroma_normalized -= np.mean(chroma_normalized, axis=0, keepdims=True)
+            # Trim the last time frame if chroma shape exceeds the expected frame count
+            if chroma_transposed.shape[0] > 120:
+                chroma_transposed = chroma_transposed[:120, :]
 
-        # Trim the last time frame if chroma shape exceeds the expected frame count
-        if chroma_normalized.shape[0] > 120:
-            chroma_normalized = chroma_normalized[:120, :]
-
-        # Append the processed, normalized chroma segment to the list
-        chroma_segments.append(chroma_normalized)
+            # Append the processed, normalized chroma segment to the list
+            chroma_segments.append(chroma_transposed)
 
     # Optionally, you can check the shape of one segment to verify the dimensions
     if chroma_segments:
