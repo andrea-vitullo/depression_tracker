@@ -43,7 +43,7 @@ for _, labels in test_generator:
     test_labels.extend(labels)
 
 # Load the model if not already in memory
-model = keras.models.load_model('./model/first_model_SAD.keras')
+model = keras.models.load_model('./model/model.keras')
 
 # Make predictions on the test set using the generator
 predictions = model.predict(test_generator)

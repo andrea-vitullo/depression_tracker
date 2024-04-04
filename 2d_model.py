@@ -1,14 +1,12 @@
 import tensorflow as tf
 import tensorflow.keras as keras
 from keras import layers, regularizers
-from keras.layers import Input, Conv1D, MaxPooling1D, LSTM, Dense, Activation, MaxPooling2D, Conv2D, Flatten, GlobalAveragePooling2D, TimeDistributed, Reshape, Dropout, BatchNormalization
+from keras.layers import Input, LSTM, Dense, Activation, MaxPooling2D, Conv2D, Dropout, BatchNormalization
 from keras.utils import plot_model
 from keras.models import Model
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, LearningRateScheduler
 from keras import backend as K
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, classification_report
-import seaborn as sns
 import logging
 
 
@@ -16,6 +14,7 @@ import my_config
 from my_config import LOGMEL_SHAPE_WINDOW, EPOCHS, BATCH_SIZE
 from utils import utils
 from data_generator import DataGenerator
+from attention_layer import Attention, squeeze_excite_block
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -79,49 +78,55 @@ dev_dataset = tf.data.Dataset.from_generator(
 audio_input = Input(shape=(*LOGMEL_SHAPE_WINDOW, 1))
 
 # Conv2D Layer
-conv1 = Conv2D(filters=256, kernel_size=(40, 3), strides=(1, 1), padding='same')(audio_input)
-conv1 = BatchNormalization()(conv1)
-conv1 = Activation('relu')(conv1)
+conv1 = Conv2D(filters=256, kernel_size=(3, 513), strides=(1, 1), padding='valid')(audio_input)
+# conv1 = squeeze_excite_block(conv1)
+# conv1 = Activation('relu')(conv1)
 
-conv2 = Conv2D(filters=128, kernel_size=(40, 3), strides=(1, 1), padding='same')(conv1)
-conv2 = BatchNormalization()(conv2)
-conv2 = Activation('relu')(conv2)
-
-conv2 = Dropout(0.3)(conv2)
-
+# conv2 = Conv2D(filters=128, kernel_size=(3, 10), strides=(1, 1), padding='valid')(conv1)
+# conv2 = squeeze_excite_block(conv2)
+# # conv2 = Activation('relu')(conv2)
+#
+# conv2 = Dropout(0.5)(conv2)
 
 # MaxPooling2D Layer
-max_pool1 = MaxPooling2D(pool_size=(3, 3), strides=(3, 3), padding='valid')(conv2)
+max_pool1 = MaxPooling2D(pool_size=(1, 1), strides=(1, 1), padding='valid')(conv1)
 
 
 # Preparing for LSTM
-# flattened = Flatten()(max_pool1)
+# flattened = layers.Flatten()(max_pool1)
+
+reshape = layers.Reshape((-1, max_pool1.shape[-1]*max_pool1.shape[-2]))(max_pool1)
+
+# Add the GRU layer
+gru = layers.GRU(256, return_sequences=True)(reshape)
+gru2 = layers.GRU(256, return_sequences=True)(gru)
+gru3 = layers.LSTM(256, return_sequences=True)(gru2)
+gru4 = layers.LSTM(256, return_sequences=True)(gru3)
+gru5 = layers.LSTM(256, return_sequences=False)(gru4)
+
+# # Assuming max_pool1 has shape (batch_size, height, width, channels)
+# batch_size, height, width, channels = K.int_shape(max_pool1)
+# reshaped = layers.Reshape((height, width * channels))(max_pool1)
 
 
-# reshaped = layers.Reshape((13, -1))(max_pool1)
-
-# Assuming max_pool1 has shape (batch_size, height, width, channels)
-batch_size, height, width, channels = K.int_shape(max_pool1)
-reshaped = layers.Reshape((height, width * channels))(max_pool1)
-
-
-# LSTM layers
-lstm_layer_1 = LSTM(128, return_sequences=True)(reshaped)  # Single LSTM layer
-lstm_layer_2 = LSTM(128, return_sequences=True)(lstm_layer_1)
-lstm_layer_3 = LSTM(128, return_sequences=False)(lstm_layer_2)
+# # LSTM layers
+# lstm_layer_1 = LSTM(128, return_sequences=True)(reshaped)  # Single LSTM layer
+# lstm_layer_2 = LSTM(128, return_sequences=True)(lstm_layer_1)
+# lstm_layer_3 = LSTM(128, return_sequences=False)(lstm_layer_2)
 
 
-output = Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.01))(lstm_layer_3)
+
+output = Dense(1, activation='sigmoid', kernel_regularizer=regularizers.l2(0.03))(gru5)
 
 model = Model(inputs=audio_input, outputs=output)
 
 
-plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+plot_model(model, to_file='2d_model_plot.png', show_shapes=True, show_layer_names=True)
 
 
 opt = keras.optimizers.legacy.Adam(learning_rate=my_config.INITIAL_LEARNING_RATE)
 
-# model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
 
 # Model summary
@@ -130,19 +135,19 @@ model.summary()
 
 callbacks = [
     ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=10, min_lr=0.00001),
-    EarlyStopping(monitor="val_loss", patience=10, verbose=1),
+    EarlyStopping(monitor="val_loss", patience=50, verbose=1),
     LearningRateScheduler(utils.lr_scheduler)
 ]
 
 epochs = EPOCHS
 
-# history = model.fit(train_dataset, epochs=epochs, validation_data=dev_dataset, callbacks=callbacks, verbose=1)
+history = model.fit(train_dataset, epochs=epochs, validation_data=dev_dataset, callbacks=callbacks, verbose=1)
 
 
 ######################################################################################################################
 
 # Save the entire model after training (Optional)
-model.save('./model/model.keras')
+model.save('./model/2d_model.keras')
 
 ######################################################################################################################
 

@@ -120,7 +120,59 @@ def extract_logmel(audio, sr, n_mels=my_config.N_MELS, length=my_config.MEL_LENG
     return logmel_padded
 
 
-def extract_logmel_segments(audio, sr, n_mels=40, n_fft=512, hop_length=512, mean=None, std=None):
+# APPLIED NORMALISATION BASED ON LOUDER TRAIN AUDIO ##################################################################
+
+# def extract_logmel_segments(audio, sr, n_mels=40, n_fft=512, hop_length=512, mean=None, std=None):
+#     # The length of each segment in samples to fit exactly 120 frames
+#     segment_length_samples = 61440  # 61,440 samples to fit the requirement
+#
+#     # Calculate the total number of segments that can be extracted from the audio
+#     num_segments = len(audio) // segment_length_samples
+#
+#     logmel_segments = []
+#
+#     for i in range(num_segments):
+#         # Calculate the start and end sample indices for the current segment
+#         start_sample = i * segment_length_samples
+#         end_sample = start_sample + segment_length_samples
+#
+#         # Extract the segment from the audio
+#         segment = audio[start_sample:end_sample]
+#
+#         # Compute the mel spectrogram for the current segment
+#         melspectrogram = librosa.feature.melspectrogram(segment, sr=sr, n_mels=n_mels, n_fft=n_fft,
+#                                                         hop_length=hop_length)
+#
+#         # Convert the power spectrogram to decibel units
+#         logmelspec = librosa.power_to_db(melspectrogram)
+#
+#         logmelspec_transposed = logmelspec.T
+#
+#         # Normalize the log-mel spectrogram if mean and std are provided
+#         if mean is not None and std is not None:
+#             logmelspec = (logmelspec_transposed - mean) / std
+#
+#         # Optional: Subtract the mean of each mel frequency bin from all frames (mean normalization per bin)
+#         logmelspec -= np.mean(logmelspec, axis=1, keepdims=True)
+#
+#         # Trim the last time frame if the spectrogram shape exceeds the expected frame count
+#         if logmelspec.shape[0] > 120:
+#             logmelspec = logmelspec[:120: ,]
+#
+#         # Append the processed log-mel spectrogram segment to the list
+#         logmel_segments.append(logmelspec)
+#
+#     # Optionally, you could print the shape of one segment to verify the dimensions
+#     if logmel_segments:
+#         print(f"One log-mel segment shape: {logmel_segments[0].shape} (Expected: (120, 40))")
+#
+#     return logmel_segments
+
+
+# APPLIED Z-NORMALISATION ON EACH SEGMENT ############################################################################
+
+
+def extract_logmel_segments(audio, sr, n_mels=40, n_fft=1024, hop_length=512):
     # The length of each segment in samples to fit exactly 120 frames
     segment_length_samples = 61440  # 61,440 samples to fit the requirement
 
@@ -144,25 +196,84 @@ def extract_logmel_segments(audio, sr, n_mels=40, n_fft=512, hop_length=512, mea
         # Convert the power spectrogram to decibel units
         logmelspec = librosa.power_to_db(melspectrogram)
 
-        # Normalize the log-mel spectrogram if mean and std are provided
-        if mean is not None and std is not None:
-            logmelspec = (logmelspec - mean) / std
+        logmelspec_transposed = logmelspec.T
+
+        # Calculate mean and std for each segment for normalization
+        mean = np.mean(logmelspec_transposed)
+        std = np.std(logmelspec_transposed)
+
+        # Normalize the log-mel spectrogram for the segment
+        logmelspec_normalized = (logmelspec_transposed - mean) / (std + 1e-8)  # 1e-8 is just a very small number and it's often called epsilon in machine learning context.
 
         # Optional: Subtract the mean of each mel frequency bin from all frames (mean normalization per bin)
-        logmelspec -= np.mean(logmelspec, axis=1, keepdims=True)
+        # This step is done after segment-wise normalization to ensure each bin's relative level is maintained
+        logmelspec_normalized -= np.mean(logmelspec_normalized, axis=1, keepdims=True)
 
         # Trim the last time frame if the spectrogram shape exceeds the expected frame count
-        if logmelspec.shape[1] > 120:
-            logmelspec = logmelspec[:, :120]
+        if logmelspec_normalized.shape[0] > 120:
+            logmelspec_normalized = logmelspec_normalized[:120, :]
 
-        # # Transpose the spectrogram
-        # logmelspec = logmelspec.T
-
-        # Append the processed log-mel spectrogram segment to the list
-        logmel_segments.append(logmelspec)
+        # Append the processed, normalized log-mel spectrogram segment to the list
+        logmel_segments.append(logmelspec_normalized)
 
     # Optionally, you could print the shape of one segment to verify the dimensions
     if logmel_segments:
-        print(f"One log-mel segment shape: {logmel_segments[0].shape} (Expected: (40, 120))")
+        print(f"One log-mel segment shape: {logmel_segments[0].shape} (Expected: (120, 40))")
 
     return logmel_segments
+
+
+# SPECTROGRAM ON EACH SEGMENT #######################################################################################
+
+
+def extract_spectrogram_segments(audio, sr, n_fft=1024, hop_length=512):
+    # The length of each segment in samples to fit exactly 120 frames
+    segment_length_samples = 61440  # 61,440 samples to fit the requirement
+
+    # Calculate the total number of segments that can be extracted from the audio
+    num_segments = len(audio) // segment_length_samples
+
+    spectrogram_segments = []
+
+    for i in range(num_segments):
+        # Calculate the start and end sample indices for the current segment
+        start_sample = i * segment_length_samples
+        end_sample = start_sample + segment_length_samples
+
+        # Extract the segment from the audio
+        segment = audio[start_sample:end_sample]
+
+        # Compute the STFT for the current segment
+        stft = librosa.stft(segment, n_fft=n_fft, hop_length=hop_length)
+
+        # Compute the spectrogram, which is the squared magnitude of each component in STFT matrix
+        spectrogram = np.abs(stft)**2
+
+        # Convert the power spectrogram to decibel units
+        logspectrogram = librosa.power_to_db(spectrogram)
+
+        logspectrogram_transposed = logspectrogram.T
+
+        # Calculate mean and std for each segment for normalization
+        # mean = np.mean(logspectrogram_transposed)
+        # std = np.std(logspectrogram_transposed)
+
+        # Normalize the log-spectrogram for the segment
+        #logspectrogram_normalized = (logspectrogram_transposed - mean) / (std + 1e-8)  # 1e-8 prevents division by zero
+
+        # Optional: Subtract the mean of each frequency bin from all frames (mean normalization per bin)
+        # This step is done after segment-wise normalization to ensure each bin's relative level is maintained
+        logspectrogram_transposed -= np.mean(logspectrogram_transposed, axis=0, keepdims=True)
+
+        if logspectrogram_transposed.shape[0] > 120:
+            logspectrogram_transposed = logspectrogram_transposed[:120, :]
+
+        # Append the processed, normalized log-spectrogram segment to the list
+        spectrogram_segments.append(logspectrogram_transposed)
+
+    # Optionally, you could print the shape of one segment to verify the dimensions
+    if spectrogram_segments:
+        print(
+            f"One spectrogram segment shape: {spectrogram_segments[0].shape} (Expected: (120, {n_fft // 2 + 1}))")  # n_fft//2 + 1 is the number of unique STFT bins
+
+    return spectrogram_segments

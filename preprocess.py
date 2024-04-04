@@ -7,13 +7,13 @@ from collections import defaultdict
 
 import my_config
 from utils import utils
-from features_extractors import extract_logmel_segments, compute_global_mel_stats
+from features_extractors import extract_logmel_segments, compute_global_mel_stats, extract_spectrogram_segments
 
 
 # EXTRACTION FUNCTION
 # [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
 # import from features_extractors
-EXTRACTION_FUNCTION = extract_logmel_segments
+EXTRACTION_FUNCTION = extract_spectrogram_segments
 
 
 # Load the data
@@ -121,7 +121,8 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
                     audio, sr = librosa.load(file_path, sr=None)
 
                     print(f"Extracting segments from {file_path}...")
-                    segments = extraction_func(audio, sr, mean=mean, std=std)  #[:optimum_segments]
+                    # segments = extraction_func(audio, sr, mean=mean, std=std)  #[:optimum_segments]
+                    segments = extraction_func(audio, sr)
                     for i, segment in enumerate(segments):
                         grp_name = f"{speaker_id}_{class_label}_{i}"
                         grp = h5f.create_group(grp_name)
@@ -149,8 +150,8 @@ preprocess_and_save_features(
     './processed_audio_features/train_features.h5',
     # augment=False,
     extraction_func=EXTRACTION_FUNCTION,
-    mean=global_mel_mean,
-    std=global_mel_std
+    # mean=global_mel_mean,
+    # std=global_mel_std
 )
 
 preprocess_and_save_features(
@@ -159,8 +160,8 @@ preprocess_and_save_features(
     './processed_audio_features/dev_features.h5',
     # augment=False,
     extraction_func=EXTRACTION_FUNCTION,
-    mean=global_mel_mean,
-    std=global_mel_std
+    # mean=global_mel_mean,
+    # std=global_mel_std
 )
 
 preprocess_and_save_features(
