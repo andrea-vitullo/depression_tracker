@@ -26,35 +26,51 @@ def extract_raw_audio(audio, sr, target_length=my_config.NSEG * my_config.H):
     return audio[:, np.newaxis]
 
 
-def extract_mfcc(audio, sr, d=my_config.N_MFCC, length=my_config.MAX_LENGTH_MFCC):
-    # Compute MFCC features with the desired number of coefficients (D)
-    mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=d, hop_length=my_config.MFCC_HOP_LENGTH, n_fft=my_config.N_FTT)
+def extract_mfcc_segments(audio, sr, n_mels=40, n_fft=1024, hop_length=512, n_mfcc=13):
+    # The length of each segment in samples to fit exactly 120 frames
+    segment_length_samples = 61440  # 61,440 samples to fit the requirement
 
-    # Transpose MFCCs to shape (time_steps, D) to align with Conv2D input expectations
-    mfccs_transposed = mfccs.T
+    # Calculate the total number of segments that can be extracted from the audio
+    num_segments = len(audio) // segment_length_samples
 
-    # Scale features to have zero mean and unit variance
-    scaler = StandardScaler()
+    mfcc_segments = []
 
-    mfccs_scaled = scaler.fit_transform(mfccs_transposed)
+    for i in range(num_segments):
+        # Calculate the start and end sample indices for the current segment
+        start_sample = i * segment_length_samples
+        end_sample = start_sample + segment_length_samples
 
-    # Initialize a zero array with the target shape (L, D)
-    mfcc_features_padded = np.zeros((length, d))
+        # Extract the segment from the audio
+        segment = audio[start_sample:end_sample]
 
-    # Copy the MFCCs into the padded array, truncating or leaving as-is based on length
-    if mfccs_transposed.shape[0] > length:
-        # If the actual number of time steps exceeds L, truncate
-        mfcc_features_padded = mfccs_transposed[:length, :]
-    else:
-        # If fewer, pad the remaining with zeros
-        mfcc_features_padded[:mfccs_transposed.shape[0], :] = mfccs_transposed
+        # Compute the MFCCs for the current segment
+        mfccs = librosa.feature.mfcc(segment, sr=sr, n_mfcc=n_mfcc, n_mels=n_mels, n_fft=n_fft, hop_length=hop_length)
 
-    # Add an additional dimension to mimic a single-channel image for Conv2D
-    mfcc_features_padded = mfcc_features_padded[..., np.newaxis]
+        # Transpose the MFCCs matrix
+        mfccs_transposed = mfccs.T
 
-    print(mfcc_features_padded.shape)
+        # Calculate mean and std for each segment for normalization
+        mean = np.mean(mfccs_transposed)
+        std = np.std(mfccs_transposed)
 
-    return mfcc_features_padded
+        # Normalize the mfccs for the segment
+        mfccs_normalized = (mfccs_transposed - mean) / (std + 1e-8)
+
+        # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
+        mfccs_normalized -= np.mean(mfccs_normalized, axis=0, keepdims=True)
+
+        # Trim the last time frame if mfcc shape exceeds the expected frame count
+        if mfccs_normalized.shape[0] > 120:
+            mfccs_normalized = mfccs_normalized[:120, :]
+
+        # Append the processed, normalized MFCC segment to the list
+        mfcc_segments.append(mfccs_normalized)
+
+    # Optionally, you can check the shape of one segment to verify the dimensions
+    if mfcc_segments:
+        print(f"One MFCC segment shape: {mfcc_segments[0].shape} (Expected: (120, {n_mfcc}))")
+
+    return mfcc_segments
 
 
 def compute_global_mel_stats(file_paths):

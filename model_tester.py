@@ -36,6 +36,6 @@ class ModelTester:
         print(classification_report(test_labels, predicted_classes, target_names=['Non-depressed', 'Depressed']))
 
 
-data_loader = DataLoader(my_config.TRAIN_H5, my_config.DEV_H5, my_config.TEST_H5)
-tester = ModelTester('./model/1d_model.keras', data_loader)
-tester.test()
+# data_loader = DataLoader(my_config.TRAIN_H5, my_config.DEV_H5, my_config.TEST_H5)
+# tester = ModelTester('./model/1d_model.keras', data_loader)
+# tester.test()

@@ -11,8 +11,8 @@ from features_extractors import extract_logmel_segments, compute_global_mel_stat
 
 
 # EXTRACTION FUNCTION
-# [extract_raw_audio, extract_mfcc, extract_logmel] based on extraction type to perform
-# import from features_extractors
+# [extract_raw_audio, extract_mfcc_segments, extract_logmel_segments, extract_spectrogram_segments]
+# based on extraction type to perform import from features_extractors
 EXTRACTION_FUNCTION = extract_spectrogram_segments
 
 
