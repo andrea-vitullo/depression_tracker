@@ -21,7 +21,7 @@ AUDIO_TEST_DIR = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test"
 AUDIO_TEST_DIR_0 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/non_depressed"
 AUDIO_TEST_DIR_1 = "/Users/andreavitullo/Desktop/DATABASE_TEST/audio_test/depressed"
 
-#  h5 DIRECTORIES
+# h5 DIRECTORIES
 TRAIN_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_features.h5'
 DEV_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_features.h5'
 TEST_H5 = '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_features.h5'
@@ -45,25 +45,37 @@ MAX_LENGTH_MFCC = 4096
 MFCC_HOP_LENGTH = 512
 N_FTT = 1024
 
-MFCC_SHAPE = (MAX_LENGTH_MFCC, N_MFCC, 1)
+MFCC_SHAPE = (120, 13)
 
 # MEL SPECTROGRAM PARAMETERS
-N_MELS = 40 # it was 80
+N_MELS = 256 # it was 80
 MEL_LENGTH = 240 # it was 4096
 MEL_HOP_LENGTH = 512
 MEL_N_FFT = 1024
 FRAME_LENGTH = 4
 MEL_HOP_LENGTH_WINDOW = 32
 
-LOGMEL_SHAPE = (MEL_LENGTH, N_MELS, 1)
-# LOGMEL_SHAPE_WINDOW = (120, N_MELS)
-LOGMEL_SHAPE_WINDOW = (120, 513)
+# LOGMEL_SHAPE = (MEL_LENGTH, N_MELS, 1)
+LOGMEL_SHAPE = (120, N_MELS)
+SPECTROGRAM_SHAPE = (120, 513)
 
 # RAW AUDIO PARAMETERS
 NSEG = 120
 H = 512
 
 RAW_SHAPE = (NSEG * H, 1)
+
+# CHROMA PARAMETERS
+CHROMA_SHAPE = (120, 128)
+
+# FEATURE SHAPES DICTIONARY
+FEATURE_SHAPES = {
+    'mfcc': (MFCC_SHAPE,),  # Replace with your actual MFCC shape
+    'chroma': (CHROMA_SHAPE,),  # Replace with your actual Chroma shape
+    'logmel': (LOGMEL_SHAPE,),
+    'spectrogram': (SPECTROGRAM_SHAPE,),  # Replace with your actual Spectrogram shape
+}
+
 
 # NN PARAMETERS
 EPOCHS = 200
@@ -73,4 +85,4 @@ N_CHANNELS = 1
 
 INITIAL_LEARNING_RATE = 0.0001
 DECAY_FACTOR = 0.9
-EPOCHS_DROP = 10
+EPOCHS_DROP = 6

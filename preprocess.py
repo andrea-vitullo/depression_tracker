@@ -11,15 +11,12 @@ import features_extractors
 
 
 # EXTRACTION FUNCTION
-# [extract_raw_audio, extract_mfcc_segments, extract_logmel_segments, extract_spectrogram_segments]
 # based on extraction type to perform import from features_extractors
-# Define extraction functions
 EXTRACTION_FUNCTIONS = {
     'mfcc': features_extractors.extract_mfcc_segments,
     'chroma': features_extractors.extract_chroma_segments,
     'logmel': features_extractors.extract_logmel_segments,
-    'spectrogram': features_extractors.extract_spectrogram_segments,
-    # acdd other feature extractors here, if you have any
+    'spectrogram': features_extractors.extract_spectrogram_segments
 }
 
 
@@ -27,6 +24,7 @@ EXTRACTION_FUNCTIONS = {
 train_files, train_labels = utils.load_files_labels(my_config.AUDIO_TRAIN_DIR)
 dev_files, dev_labels = utils.load_files_labels(my_config.AUDIO_DEV_DIR)
 test_files, test_labels = utils.load_files_labels(my_config.AUDIO_TEST_DIR)
+
 
 
 # Define datasets
@@ -37,7 +35,12 @@ datasets = {
 }
 
 
-global_mel_mean, global_mel_std = features_extractors.compute_global_mel_stats(train_files)
+# Compute global stats for each type of feature across training set
+global_stats = {}
+for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
+    print(f"Computing global stats for {feature_name} features.")
+    mean, std = features_extractors.compute_global_stats(train_files, extraction_func)
+    global_stats[feature_name] = {'mean': mean, 'std': std}
 
 
 ######################################################################################################################
@@ -85,7 +88,8 @@ def balance_and_select_speakers(file_paths, labels, speaker_ids, num_speakers_pe
 ######################################################################################################################
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, extraction_func, speakers_per_class=None):
+def preprocess_and_save_features(file_paths, labels, output_file_path, extraction_func,
+                                 speakers_per_class=None, mean=0, std=1):
 
     # Initialize counters for depressed/non-depressed segments
     label_counters = defaultdict(int)
@@ -98,7 +102,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 
     print("Mapping speaker IDs to their files and labels...")
     for path, label in zip(file_paths, labels):
-        speaker_id = re.findall(r"(\d+)_Final.wav", path)[0]
+        speaker_id = re.findall(r"(\d+)_NoSilence.wav", path)[0]
         if speaker_id not in speaker_data:
             speaker_data[speaker_id] = {'files': [], 'label': label}
             print(f"Speaker ID {speaker_id} added to speaker_data with label {label}.")
@@ -135,7 +139,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
                     audio, sr = librosa.load(file_path, sr=None)
 
                     print(f"Extracting segments from {file_path}...")
-                    segments = extraction_func(audio, sr)
+                    segments = extraction_func(audio, sr, mean=mean, std=std)
                     for i, segment in enumerate(segments):
                         grp_name = f"{speaker_id}_{class_label}_{i}"
                         grp = h5f.create_group(grp_name)
@@ -144,8 +148,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 
                         label_counters[class_label] += 1
 
-                        # print(
-                        #     f"Saved segment {i + 1}/{len(segments)} for speaker ID {speaker_id}, class {class_label}.")
+                        print(f"Saved segment {i + 1}/{len(segments)} for speaker ID {speaker_id}, class {class_label}.")
 
     print(f"Data preprocessed and saved to {output_file_path} with balanced speakers across classes.\n")
 
@@ -157,32 +160,47 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 ######################################################################################################################
 
 
-preprocess_and_save_features(
-    train_files,
-    train_labels,
-    './processed_audio_features/train_features.h5',
-    # augment=False,
-    extraction_func=EXTRACTION_FUNCTION,
-    # mean=global_mel_mean,
-    # std=global_mel_std
-)
+# Process and save features for each dataset and extraction function
+for dataset_name, (files, labels) in datasets.items():
+    for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
+        output_file_path = f'./processed_audio_features/{dataset_name}_{feature_name}.h5'
+        mean, std = features_extractors.compute_global_stats(files, extraction_func)
+        preprocess_and_save_features(
+            files,
+            labels,
+            output_file_path,
+            extraction_func=extraction_func,
+            mean=mean,
+            std=std
+        )
 
-preprocess_and_save_features(
-    dev_files,
-    dev_labels,
-    './processed_audio_features/dev_features.h5',
-    # augment=False,
-    extraction_func=EXTRACTION_FUNCTION,
-    # mean=global_mel_mean,
-    # std=global_mel_std
-)
 
-preprocess_and_save_features(
-    test_files,
-    test_labels,
-    './processed_audio_features/test_features.h5',
-    # augment=False,
-    extraction_func=EXTRACTION_FUNCTION,
-    # mean=global_mel_mean,
-    # std=global_mel_std
-)
+# preprocess_and_save_features(
+#     train_files,
+#     train_labels,
+#     './processed_audio_features/train_features.h5',
+#     # augment=False,
+#     extraction_func=EXTRACTION_FUNCTION,
+#     # mean=global_mel_mean,
+#     # std=global_mel_std
+# )
+#
+# preprocess_and_save_features(
+#     dev_files,
+#     dev_labels,
+#     './processed_audio_features/dev_features.h5',
+#     # augment=False,
+#     extraction_func=EXTRACTION_FUNCTION,
+#     # mean=global_mel_mean,
+#     # std=global_mel_std
+# )
+#
+# preprocess_and_save_features(
+#     test_files,
+#     test_labels,
+#     './processed_audio_features/test_features.h5',
+#     # augment=False,
+#     extraction_func=EXTRACTION_FUNCTION,
+#     # mean=global_mel_mean,
+#     # std=global_mel_std
+# )

@@ -9,31 +9,11 @@ import matplotlib.pyplot as plt
 import logging
 
 import my_config
-from my_config import LOGMEL_SHAPE_WINDOW, EPOCHS
-from utils import utils
+from my_config import SPECTROGRAM_SHAPE, EPOCHS
+from utils import utils, f1_metric
 from data_loader import DataLoader
 from model_tester import ModelTester
 from attention_layer import Attention, squeeze_excite_block
-
-
-class F1Metric(tf.keras.metrics.Metric):
-    def __init__(self, name='f1_score', **kwargs):
-        super().__init__(name=name, **kwargs)
-        self.precision = tf.keras.metrics.Precision()
-        self.recall = tf.keras.metrics.Recall()
-
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        self.precision.update_state(y_true, y_pred, sample_weight)
-        self.recall.update_state(y_true, y_pred, sample_weight)
-
-    def result(self):
-        precision = self.precision.result()
-        recall = self.recall.result()
-        return 2 * ((precision * recall) / (precision + recall + tf.keras.backend.epsilon()))
-
-    def reset_state(self):
-        self.precision.reset_state()
-        self.recall.reset_state()
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -42,7 +22,7 @@ data_loader = DataLoader(my_config.TRAIN_H5, my_config.DEV_H5, my_config.TEST_H5
 
 
 # Input layer
-audio_input = Input(shape=LOGMEL_SHAPE_WINDOW)
+audio_input = Input(shape=SPECTROGRAM_SHAPE)
 
 # Conv2D Layer
 conv1 = Conv1D(filters=128, kernel_size=40, strides=1, padding='valid')(audio_input)
@@ -86,7 +66,7 @@ model.compile(optimizer=opt,
               metrics=['accuracy',
                        tf.keras.metrics.Precision(),
                        tf.keras.metrics.Recall(),
-                       F1Metric(),
+                       f1_metric.F1Metric(),
                        tf.keras.metrics.AUC()])
 
 
@@ -100,10 +80,9 @@ callbacks = [
     LearningRateScheduler(utils.lr_scheduler)
 ]
 
-epochs = EPOCHS
 
 history = model.fit(data_loader.train_dataset,
-                    epochs=epochs,
+                    epochs=EPOCHS,
                     validation_data=data_loader.dev_dataset,
                     callbacks=callbacks,
                     verbose=1)
