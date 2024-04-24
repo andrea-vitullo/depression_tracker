@@ -94,7 +94,7 @@ def get_audio_lengths():
     names = list(audio_lengths.keys())
     values = list(audio_lengths.values())
 
-    fig, ax = plt.subplots(figsize=(80, 20))
+    plt.subplots(figsize=(80, 20))
     plt.bar(names, values)
     plt.title("Lengths of audio files")
     plt.xlabel("File names")
@@ -185,6 +185,7 @@ def normalise():
                 waveform = waveform / np.max(np.abs(waveform))
                 waveform = librosa.resample(waveform, orig_sr=sample_rate, target_sr=target_sample_rate)
                 sf.write(full_audio_path, waveform, target_sample_rate)
+
 
 def min_max_normalization(data):
     """
