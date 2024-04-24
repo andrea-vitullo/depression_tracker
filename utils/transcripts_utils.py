@@ -21,7 +21,7 @@ def read_transcript(directory):
         p_id = None
         for p_file in p_files:
             if p_file.endswith("_TRANSCRIPT.csv"):
-                p_dframe = pd.read_csv(os.path.join(p_path, p_file), sep='\t')
+                p_dframe = pd.read_csv(str(os.path.join(p_path, p_file)), sep='\t')
                 p_dframe = p_dframe[p_dframe.speaker.isin(['Participant', 'Ellie'])]
                 if p_dframe.empty:
                     print(f"No 'Participant' or 'Ellie' data found in {os.path.join(p_path, p_file)}")
@@ -75,7 +75,7 @@ def get_participant_info(directory):
         p_id = None
         for p_file in p_files:
             if p_file.endswith("_TRANSCRIPT.csv"):
-                p_dframe = pd.read_csv(os.path.join(p_path, p_file), sep='\t')
+                p_dframe = pd.read_csv(os.path.join(str(p_path), str(p_file)), sep='\t')
                 p_dframe = p_dframe[p_dframe.speaker == 'Participant']
                 if p_dframe.empty:
                     print(f"No participant data found in {os.path.join(p_path, p_file)}")
