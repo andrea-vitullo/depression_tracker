@@ -4,6 +4,7 @@ from pydub import AudioSegment
 from utils import audio_utils, transcripts_utils
 import my_config
 
+
 for path, directories, files in os.walk(my_config.DIRECTORY):
     for file in files:
         if file.endswith(my_config.START_FORMAT):
