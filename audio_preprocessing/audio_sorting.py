@@ -31,6 +31,24 @@ os.makedirs(test_dir_1, exist_ok=True)
 
 
 def dataframe_iterator(dataframe, dir_0, dir_1):
+    """
+    Iterate over a pandas DataFrame, extract binary values and gender values, and sort the audio files
+    based on these binary values.
+
+    Each row in the DataFrame corresponds to an audio file, identified by 'Participant_ID'. Depending on the binary value,
+    the associated audio file is sorted into one of the two directories provided.
+
+    If the DataFrame is the test dataframe, 'PHQ_Binary' is the key for the binary value, otherwise 'PHQ8_Binary' is used.
+
+    Args:
+        dataframe: A pandas DataFrame with at least 'Participant_ID', 'PHQ_Binary' (or 'PHQ8_Binary') and 'Gender' columns.
+        dir_0: Path to the directory where audio files with binary value 0 should be sorted to.
+        dir_1: Path to the directory where audio files with binary value 1 should be sorted to.
+
+    Returns:
+        labels_list: A list of the binary values from the DataFrame in their original order.
+    """
+
     labels_list = []
 
     for index, row in dataframe.iterrows():
