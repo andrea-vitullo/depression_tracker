@@ -11,13 +11,13 @@ from data_management.data_loader import DataLoader
 
 
 train_files = {
-    'chroma': './processed_audio_features/train_chroma.h5'
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_chroma.h5'
 }
 dev_files = {
-    'chroma': './processed_audio_features/dev_chroma.h5'
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_chroma.h5'
 }
 test_files = {
-    'chroma': './processed_audio_features/test_chroma.h5'
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_chroma.h5'
 }
 
 # Create DataLoader and DataGenerator with the feature shapes
@@ -110,7 +110,7 @@ optuna.logging.enable_default_handler()
 study = optuna.create_study(direction='maximize')
 
 # Proceed with optimization
-study.optimize(objective, n_trials=20)
+study.optimize(objective, n_trials=100)
 
 # After optimization, you can disable logging if you prefer.
 optuna.logging.disable_default_handler()

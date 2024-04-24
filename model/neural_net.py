@@ -17,22 +17,22 @@ from data_management.data_loader import DataLoader
 
 
 train_files = {
-    # 'mfcc': './processed_audio_features/train_mfcc.h5',
-    'chroma': './processed_audio_features/train_chroma.h5',
-    # 'logmel': './processed_audio_features/train_logmel.h5',
-    # 'spectrogram': './processed_audio_features/train_spectrogram.h5',
+    # 'mfcc': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_mfcc.h5',
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_chroma.h5',
+    # 'logmel': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_logmel.h5',
+    # 'spectrogram': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_spectrogram.h5',
 }
 dev_files = {
-    # 'mfcc': './processed_audio_features/dev_mfcc.h5',
-    'chroma': './processed_audio_features/dev_chroma.h5',
-    # 'logmel': './processed_audio_features/dev_logmel.h5',
-    # 'spectrogram': './processed_audio_features/dev_spectrogram.h5',
+    # 'mfcc': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_mfcc.h5',
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_chroma.h5',
+    # 'logmel': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_logmel.h5',
+    # 'spectrogram': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/dev_spectrogram.h5',
 }
 test_files = {
-    # 'mfcc': './processed_audio_features/test_mfcc.h5',
-    'chroma': './processed_audio_features/test_chroma.h5',
-    # 'logmel': './processed_audio_features/test_logmel.h5',
-    # 'spectrogram': './processed_audio_features/test_spectrogram.h5',
+    # 'mfcc': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_mfcc.h5',
+    'chroma': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_chroma.h5',
+    # 'logmel': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_logmel.h5',
+    # 'spectrogram': '/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/test_spectrogram.h5',
 }
 
 
