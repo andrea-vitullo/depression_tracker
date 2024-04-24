@@ -19,16 +19,15 @@ def mean_response_time(response):
     mean_times = list(mean_response_times.values())
 
     # Once all data is collected, plot the mean response times
-    plt.figure(figsize=(60, 36))  # Creates a new figure
-    plt.bar(participant_ids, mean_times)  # Plots mean participant response times
+    plt.figure(figsize=(60, 36))
+    plt.bar(participant_ids, mean_times)
     plt.title('Bar Plot of Mean Participant Response Times')
     plt.xlabel('Participant ID')
     plt.ylabel('Mean Response Time')
 
-    # Save the figure before showing it
-    plt.savefig('mean_response_times.png')  # Provide the filename (.png, .jpg, .pdf, etc.)
+    plt.savefig('mean_response_times.png')
 
-    plt.show()  # Display the plot
+    plt.show()
 
 
 def top_response_times(participant_response):
@@ -72,8 +71,7 @@ def top_response_times(participant_response):
     plt.xlabel('Participant ID')
     plt.ylabel('Shortest Mean Response Time')
 
-    # Save the figure before showing it
-    plt.savefig('shortest_response_times.png')  # Provide the filename (.png, .jpg, .pdf, etc.)
+    plt.savefig('shortest_response_times.png')
     plt.show()
 
     # Plot the longest response times
@@ -83,8 +81,7 @@ def top_response_times(participant_response):
     plt.xlabel('Participant ID')
     plt.ylabel('Longest Mean Response Time')
 
-    # Save the figure before showing it
-    plt.savefig('longest_response_times.png')  # Provide the filename (.png, .jpg, .pdf, etc.)
+    plt.savefig('longest_response_times.png')
     plt.show()
 
 
@@ -118,14 +115,13 @@ def response_to_average(response_times):
     # Plot the response times
     plt.figure(figsize=(60, 16))
     plt.bar(labels, sorted_response_times)
-    plt.axhline(0, color='red', linewidth=2)  # add a line at zero for average
+    plt.axhline(0, color='red', linewidth=2)
     plt.xticks(rotation=90)
     plt.title('Mean Participant Response Times Relative to Average', fontsize=40)
     plt.xlabel('Participants (Average Response Time)', fontsize=40)
     plt.ylabel('Normalized Response Time', fontsize=40)
 
-    # Save the figure before showing it
-    plt.savefig('response_to_average.png')  # Provide the filename (.png, .jpg, .pdf, etc.)
+    plt.savefig('response_to_average.png')
     plt.show()
 
 
