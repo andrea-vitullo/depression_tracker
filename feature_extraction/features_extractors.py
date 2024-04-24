@@ -311,7 +311,7 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128, mean=0, std=1
 
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=np.ComplexWarning)
-            chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length, n_chroma=128)
+            chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length, n_chroma=12)
 
             # Transpose the chroma matrix
             chroma_transposed = chroma.T
@@ -338,6 +338,6 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128, mean=0, std=1
 
     # Optionally, you can check the shape of one segment to verify the dimensions
     if chroma_segments:
-        print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 128))")  # 12 chroma features
+        print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 12))")  # 12 chroma features
 
     return chroma_segments

@@ -47,7 +47,6 @@ for path, directories, files in os.walk(my_config.DIRECTORY):
         # Delete the split files
         for audio_file in audio_files_to_delete:
             os.remove(audio_file)
-            print(f"Deleted {audio_file}")
     else:
         print("No participant start audio file found, skipping concatenation.")
 

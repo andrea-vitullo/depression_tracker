@@ -10,6 +10,7 @@ def mean_response_time(response):
     Returns:
         None
     """
+
     # Calculate the mean response times
     mean_response_times = {p_id: np.mean(times) for p_id, times in response.items()}
 
@@ -38,6 +39,7 @@ def top_response_times(participant_response):
     Returns:
         None
     """
+
     # Calculate the mean response times
     mean_response_times = {p_id: np.mean(times) for p_id, times in participant_response.items() if times}
 
@@ -94,6 +96,7 @@ def response_to_average(response_times):
     Returns:
         None
     """
+
     # Calculate the overall average response time
     overall_average_time = np.mean([time for times in response_times.values() for time in times])
 
@@ -123,4 +126,36 @@ def response_to_average(response_times):
 
     # Save the figure before showing it
     plt.savefig('response_to_average.png')  # Provide the filename (.png, .jpg, .pdf, etc.)
+    plt.show()
+
+
+def model_plot_history(hstory):
+    """
+    Plot and display the accuracy and error progressions over training epochs for the model training history.
+
+    Args:
+        hstory: The history of the trained model, typically returned by model.fit() in keras. Should contain history of
+        binary accuracy and loss for both training and validation sets over epochs.
+
+    Returns:
+        None
+    """
+
+    fig, axs = plt.subplots(2)
+
+    # create accuracy subplot
+    axs[0].plot(hstory.history["binary_accuracy"], label="train accuracy")
+    axs[0].plot(hstory.history["val_binary_accuracy"], label="validation accuracy")
+    axs[0].set_ylabel("Binary Accuracy")
+    axs[0].legend(loc="lower right")
+    axs[0].set_title("Binary Accuracy Evaluation")
+
+    # create error subplot
+    axs[1].plot(hstory.history["loss"], label="train error")
+    axs[1].plot(hstory.history["val_loss"], label="validation error")
+    axs[1].set_xlabel("Epoch")
+    axs[1].set_ylabel("Error")
+    axs[1].legend(loc="upper right")
+    axs[1].set_title("Error Evaluation")
+
     plt.show()
