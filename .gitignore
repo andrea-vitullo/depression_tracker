@@ -4,7 +4,7 @@
 utils/.DS_Store
 utils/__pycache__/
 .idea/
-model/
+model/model.keras
 model/model_plot.png
 processed_audio_features/
 
