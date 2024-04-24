@@ -16,6 +16,7 @@ def read_transcript(directory):
         p_path: Path to the transcript file
         p_id: Participant id of the transcript
     """
+
     for p_path, p_direct, p_files in os.walk(directory):
         p_dframe = None
         p_id = None
@@ -40,6 +41,7 @@ def extract_response_times(df, epsilon=0.1):
     Returns:
         None
     """
+
     # Getting all Ellie and Participant only conversation rows & and shifting them up for calculating response time
     convo_df = df[df['speaker'].isin(['Ellie', 'Participant'])].copy()
     convo_df[['next_start_time', 'next_speaker']] = convo_df[['start_time', 'speaker']].shift(-1)
@@ -69,6 +71,7 @@ def get_participant_info(directory):
         p_path: Path to the temporary audio file
         p_id: Participant id of the transcript
     """
+
     for p_path, p_direct, p_files in os.walk(directory):
         p_tempaudio = None
         p_dframe = None

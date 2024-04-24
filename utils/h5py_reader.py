@@ -4,6 +4,7 @@ import random
 filename = '../processed_audio_features/train_chroma.h5'
 
 with h5py.File(filename, 'r') as f:
+
     # List all groups
     print("Keys: %s" % f.keys())
     keys = list(f.keys())
