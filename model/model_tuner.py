@@ -6,7 +6,7 @@ from tensorflow.keras.layers import (Input, Dense, Conv1D, MaxPooling1D, Flatten
 import tensorflow as tf
 
 from my_config import FEATURE_SHAPES
-from utils import f1_metric
+from model import f1_metric
 from data_management.data_loader import DataLoader
 
 

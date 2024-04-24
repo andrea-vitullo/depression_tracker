@@ -6,14 +6,13 @@ from keras.layers import Input, Dense, Activation, MaxPooling1D, Conv1D, Dropout
 from tensorflow.keras.models import Model
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import LearningRateScheduler
-import matplotlib.pyplot as plt
 from sklearn.utils import class_weight
 import numpy as np
 
 import my_config
-import plots
 from my_config import FEATURE_SHAPES, EPOCHS
-from utils import utils, f1_metric
+from utils import utils, plots
+from model import f1_metric
 from data_management.data_loader import DataLoader
 
 
