@@ -75,14 +75,13 @@ def load_features(file_path):
     """
 
     with h5py.File(file_path, 'r') as h5f:
-        # Let's assume we know the number of samples beforehand
+
         num_samples = len(h5f.keys())
-        # Let's assume all audio data have the same shape
         sample_shape = h5f[list(h5f.keys())[0]]['audio'].shape
 
         # Pre-allocate arrays
         audio_data = np.zeros((num_samples,) + sample_shape)
-        labels = np.zeros((num_samples, 1))  # assuming labels are scalar values
+        labels = np.zeros((num_samples, 1))
 
         for i, key in enumerate(h5f.keys()):
             audio_data[i] = h5f[key]['audio'][:]
@@ -102,25 +101,21 @@ def compute_global_stats_from_test_data(audio_files_directory):
         tuple: A tuple containing the global mean and standard deviation of the Mel spectrograms.
     """
 
-    all_mel_specs = []
+    all_audio_files = []
 
-    # Assuming audio files are in 'wav' format
     audio_files = [f for f in os.listdir(audio_files_directory) if f.endswith('.wav')]
 
     for audio_file in audio_files:
         audio_file_path = os.path.join(audio_files_directory, audio_file)
         audio, sr = librosa.load(audio_file_path, sr=None)  # Load audio at its native sampling rate
 
-        # Compute Mel spectrogram without applying dB conversion
-        mel_spec = librosa.feature.melspectrogram(y=audio, sr=sr)
+        all_audio_files.append(audio.flatten())
 
-        all_mel_specs.append(mel_spec.flatten())
-
-    # Concatenate all mel spectrograms into a single 1D array
-    all_mel_specs_flat = np.concatenate(all_mel_specs)
+    # Concatenate all audio files into a single 1D array
+    all_audio = np.concatenate(all_audio_files)
 
     # Calculate global mean and std
-    global_mean = np.mean(all_mel_specs_flat)
-    global_std = np.std(all_mel_specs_flat)
+    global_mean = np.mean(all_audio)
+    global_std = np.std(all_audio)
 
     return global_mean, global_std
