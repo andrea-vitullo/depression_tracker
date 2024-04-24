@@ -2,18 +2,30 @@ import os
 import glob
 import librosa
 import numpy as np
-import soundfile as sf  # Import the soundfile library
+import soundfile as sf
+
+import my_config
 
 
-def extract_non_silent(audio, sr, threshold=1e-10):
-    """Extracts non-silent segments from an audio signal."""
+def extract_non_silent(audio, threshold=1e-10):
+    """
+    Extracts non-silent segments from an audio signal.
+
+    Args:
+        audio: The audio signal as a numpy array.
+        threshold: Amplitude below which a sample is considered silent.
+
+    Returns:
+        non_silent_segments: A list of non-silent segments. Each segment is a list of audio samples.
+    """
+
     non_silent_segments = []
     current_segment = []
-    is_silent = lambda sample: abs(sample) < threshold
+    is_silent = lambda smpl: abs(smpl) < threshold
 
     for sample in audio:
         if is_silent(sample):
-            if current_segment:  # End of a non-silent segment
+            if current_segment:
                 non_silent_segments.append(current_segment)
                 current_segment = []
         else:
@@ -27,31 +39,47 @@ def extract_non_silent(audio, sr, threshold=1e-10):
 
 
 def process_audio_file(file_path):
-    # Load your audio file
-    audio, sr = librosa.load(file_path, sr=None)
+    """
+    Process a single audio file by replacing silent segments with non-silent ones.
+    Creates a new audio file with silence removed.
 
-    # Extract non-silent segments
+    Args:
+        file_path: The path to the audio file to process.
+
+    Returns:
+        None
+    """
+
+    audio, sr = librosa.load(file_path, sr=None)
     non_silent_audio_segments = extract_non_silent(audio, sr)
 
     # Combine non-silent segments into a single array
     combined_segments = np.concatenate([np.array(segment) for segment in non_silent_audio_segments])
 
-    # Saving the processed audio back to a file using soundfile library
     output_file_path = file_path.replace('_Final.wav', '_NoSilence.wav')
     sf.write(output_file_path, combined_segments, sr)
 
     print(f"Processed and saved: {output_file_path}")
 
 
-def process_files_in_folder(main_folder_path):
-    # Refine the search pattern to match your naming convention
-    search_pattern = os.path.join(main_folder_path, '**', '*_Final.wav')
+def process_files_in_folder(folder_path):
+    """
+    Process all audio files in a folder and its sub-folders. Audio files are identified by the '_Final.wav' suffix.
+    For each audio file, a new file is created with silent segments removed.
+
+    Args:
+        folder_path: Path to the folder containing audio files.
+
+    Returns:
+        None
+    """
+
+    search_pattern = os.path.join(folder_path, '**', '*_Final.wav')
 
     for wav_file in glob.glob(search_pattern, recursive=True):
         print(f"Processing {wav_file}...")
         process_audio_file(wav_file)
 
 
-# Replace this with the path to your main folder containing subfolders and WAV files
-main_folder_path = '/Users/andreavitullo/Desktop/DATABASE_TEST'
+main_folder_path = my_config.DIRECTORY
 process_files_in_folder(main_folder_path)
