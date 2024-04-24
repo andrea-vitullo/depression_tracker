@@ -1,7 +1,7 @@
 import h5py
 import random
 
-filename = './processed_audio_features/train_mfcc.h5'
+filename = '../processed_audio_features/train_chroma.h5'
 
 with h5py.File(filename, 'r') as f:
     # List all groups

@@ -7,7 +7,7 @@ import soundfile as sf
 import random
 
 from my_config import *
-from features_extractors import extract_raw_audio, extract_mfcc_segments, extract_logmel, extract_logmel_segments, extract_chroma_segments
+from feature_extraction.features_extractors import extract_raw_audio_segments, extract_mfcc_segments, extract_logmel_segments, extract_spectrogram_segments, extract_chroma_segments
 from utils.utils import compute_global_stats_from_test_data
 
 
@@ -28,7 +28,7 @@ class FeatureExtractionTest(unittest.TestCase):
             target_length = NSEG * H
 
             # Extract and standardize audio
-            audio = extract_raw_audio(audio, sr, target_length)
+            audio = extract_raw_audio_segments(audio, sr, target_length)
 
             # Compute time array
             time = np.arange(0, len(audio)) / sr
@@ -101,7 +101,7 @@ class FeatureExtractionTest(unittest.TestCase):
             audio, sr = sf.read(audio_file_path)
 
             # Extract LogMel features
-            logmel_features = extract_logmel(audio, sr, mean=global_mean, std=global_std)
+            logmel_features = extract_spectrogram_segments(audio, sr, mean=global_mean, std=global_std)
 
             # Remove the last dimension for plotting
             logmel_features_2d = logmel_features.squeeze(-1)

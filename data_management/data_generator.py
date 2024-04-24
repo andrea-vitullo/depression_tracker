@@ -2,10 +2,9 @@ from collections import defaultdict
 from keras.utils import Sequence
 import numpy as np
 import h5py
-from multi_data_augmentation import FeatureAugmentor  # Assuming the augmentor class is defined in this module
 
 
-class MultiDataGenerator(Sequence):
+class DataGenerator(Sequence):
     def __init__(self, h5_files, batch_size, feature_shapes, use_augmented_data=False, verbose=False):
         self.h5_files = h5_files
         self.batch_size = batch_size

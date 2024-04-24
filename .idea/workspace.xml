@@ -5,18 +5,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bfc004e0-7d20-4a01-83e0-ac42c49d4f3b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/delete_silences.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/multi_data_generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/multi_data_loader.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/multi_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unit_tests/data_generator_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unit_tests/data_loader_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/f1_metric.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/balancing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/deal_with _images.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/feature_extraction/count_segments.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/h5py_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/h5py_sad_reader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model_tuner.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pytorch_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sad_extraction.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sad_file.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sad_generator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sad_loader.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sad_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/1d_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/1d_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/features_extractors.py" beforeDir="false" afterPath="$PROJECT_DIR$/features_extractors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/audio_sorting.py" beforeDir="false" afterPath="$PROJECT_DIR$/audio_preprocessing/audio_sorting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/delete_silences.py" beforeDir="false" afterPath="$PROJECT_DIR$/audio_preprocessing/delete_silences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diarisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/audio_preprocessing/diarisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features_extractors.py" beforeDir="false" afterPath="$PROJECT_DIR$/feature_extraction/features_extractors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/file_management/formant_sorting.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/file_management/mfcc_sorting.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model_tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_data_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/multi_data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_data_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/multi_data_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/multi_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/multi_model_plot.png" beforeDir="false" afterPath="$PROJECT_DIR$/multi_model_plot.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/my_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/noise_removal.py" beforeDir="false" afterPath="$PROJECT_DIR$/audio_preprocessing/noise_removal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/feature_extraction/extract.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/file_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/file_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,14 +85,23 @@
     &quot;Python.MFCC.executor&quot;: &quot;Run&quot;,
     &quot;Python.audio_sorting.executor&quot;: &quot;Run&quot;,
     &quot;Python.audio_utils.executor&quot;: &quot;Run&quot;,
+    &quot;Python.balancing.executor&quot;: &quot;Run&quot;,
+    &quot;Python.count_segments.executor&quot;: &quot;Run&quot;,
     &quot;Python.covarep_sorting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.deal_with _images.executor&quot;: &quot;Run&quot;,
     &quot;Python.delete_silences.executor&quot;: &quot;Run&quot;,
     &quot;Python.diarisation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.diarisation_II.executor&quot;: &quot;Run&quot;,
+    &quot;Python.extract.executor&quot;: &quot;Run&quot;,
     &quot;Python.features_extractors.executor&quot;: &quot;Run&quot;,
     &quot;Python.file_utils.executor&quot;: &quot;Run&quot;,
     &quot;Python.formant_sorting.executor&quot;: &quot;Run&quot;,
     &quot;Python.get_formant.executor&quot;: &quot;Run&quot;,
+    &quot;Python.h5py_reader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.h5py_sad_reader.executor&quot;: &quot;Run&quot;,
     &quot;Python.mfcc_sorting.executor&quot;: &quot;Run&quot;,
+    &quot;Python.model_tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.model_tuner.executor&quot;: &quot;Run&quot;,
     &quot;Python.multi_data_loader.executor&quot;: &quot;Run&quot;,
     &quot;Python.multi_model.executor&quot;: &quot;Run&quot;,
     &quot;Python.my_config.executor&quot;: &quot;Run&quot;,
@@ -83,7 +112,11 @@
     &quot;Python.noise_removal.executor&quot;: &quot;Run&quot;,
     &quot;Python.prepare_mfcc.executor&quot;: &quot;Run&quot;,
     &quot;Python.preprocess.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pytorch_model.executor&quot;: &quot;Run&quot;,
     &quot;Python.raw_audio_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.sad_extraction.executor&quot;: &quot;Run&quot;,
+    &quot;Python.sad_model.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
     &quot;Python.transcripts.executor&quot;: &quot;Run&quot;,
     &quot;Python.transcripts_utils.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -101,10 +134,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/audio_preprocessing" />
+      <recent name="$PROJECT_DIR$/feature extraction" />
       <recent name="$PROJECT_DIR$/unit_tests" />
       <recent name="$PROJECT_DIR$/file_management" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/utils" />
     </key>
   </component>
   <component name="RunManager">
@@ -243,6 +277,19 @@
       <workItem from="1712332187436" duration="33878000" />
       <workItem from="1712467738449" duration="4087000" />
       <workItem from="1712474504907" duration="3483000" />
+      <workItem from="1712480985049" duration="11914000" />
+      <workItem from="1712495364720" duration="200000" />
+      <workItem from="1712552691577" duration="85064000" />
+      <workItem from="1712816161992" duration="19479000" />
+      <workItem from="1712837635526" duration="47596000" />
+      <workItem from="1712935902644" duration="502000" />
+      <workItem from="1712946829919" duration="64000" />
+      <workItem from="1712947037339" duration="3180000" />
+      <workItem from="1712950244831" duration="763000" />
+      <workItem from="1712951457637" duration="4038000" />
+      <workItem from="1712957268496" duration="12816000" />
+      <workItem from="1713080345270" duration="12434000" />
+      <workItem from="1713159361230" duration="14545000" />
     </task>
     <servers />
   </component>
@@ -278,26 +325,39 @@
     <SUITE FILE_PATH="coverage/final_project$multi_data_loader.coverage" NAME="multi_data_loader Coverage Results" MODIFIED="1712260019268" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$transcripts_utils.coverage" NAME="transcripts_utils Coverage Results" MODIFIED="1707329289107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$formant_sorting.coverage" NAME="formant_sorting Coverage Results" MODIFIED="1710944163198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$model_tuner.coverage" NAME="model_tuner Coverage Results" MODIFIED="1712656206841" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$.coverage" NAME=" Coverage Results" MODIFIED="1712395315728" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/unit_tests" />
-    <SUITE FILE_PATH="coverage/final_project$delete_silences.coverage" NAME="delete_silences Coverage Results" MODIFIED="1712327549436" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$delete_silences.coverage" NAME="delete_silences Coverage Results" MODIFIED="1712569952787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$covarep_sorting.coverage" NAME="covarep_sorting Coverage Results" MODIFIED="1711016564761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$diarisation_II.coverage" NAME="diarisation_II Coverage Results" MODIFIED="1712557800583" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$pytorch_model.coverage" NAME="pytorch_model Coverage Results" MODIFIED="1713094063594" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$new_neural_net.coverage" NAME="new_neural_net Coverage Results" MODIFIED="1711033134435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$audio_utils.coverage" NAME="audio_utils Coverage Results" MODIFIED="1711108235324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/final_project$count_segments.coverage" NAME="count_segments Coverage Results" MODIFIED="1712858824747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/feature_extraction" />
+    <SUITE FILE_PATH="coverage/final_project$sad_model.coverage" NAME="sad_model Coverage Results" MODIFIED="1712835313935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$mfcc_sorting.coverage" NAME="mfcc_sorting Coverage Results" MODIFIED="1710943522235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$test.coverage" NAME="test Coverage Results" MODIFIED="1712830622883" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$nn.coverage" NAME="nn Coverage Results" MODIFIED="1711035928371" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$preprocess.coverage" NAME="preprocess Coverage Results" MODIFIED="1712474531596" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$preprocess.coverage" NAME="preprocess Coverage Results" MODIFIED="1712572113889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$new_nn.coverage" NAME="new_nn Coverage Results" MODIFIED="1711101297492" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$my_config.coverage" NAME="my_config Coverage Results" MODIFIED="1712405303417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$multi_model.coverage" NAME="multi_model Coverage Results" MODIFIED="1712480211051" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$file_utils.coverage" NAME="file_utils Coverage Results" MODIFIED="1711970704561" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/final_project$model_tester.coverage" NAME="model_tester Coverage Results" MODIFIED="1712935338855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$multi_model.coverage" NAME="multi_model Coverage Results" MODIFIED="1713174102310" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$h5py_sad_reader.coverage" NAME="h5py_sad_reader Coverage Results" MODIFIED="1712834276318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$file_utils.coverage" NAME="file_utils Coverage Results" MODIFIED="1712569467998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/final_project$MFCC.coverage" NAME="MFCC Coverage Results" MODIFIED="1710779227355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$audio_sorting.coverage" NAME="audio_sorting Coverage Results" MODIFIED="1711536698301" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$audio_sorting.coverage" NAME="audio_sorting Coverage Results" MODIFIED="1712946851203" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/audio_preprocessing" />
     <SUITE FILE_PATH="coverage/final_project$get_formant.coverage" NAME="get_formant Coverage Results" MODIFIED="1710844472844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$noise_removal.coverage" NAME="noise_removal Coverage Results" MODIFIED="1711107079638" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$h5py_reader.coverage" NAME="h5py_reader Coverage Results" MODIFIED="1712934682808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$prepare_mfcc.coverage" NAME="prepare_mfcc Coverage Results" MODIFIED="1711028043921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$diarisation.coverage" NAME="diarisation Coverage Results" MODIFIED="1711536124407" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$raw_audio_model.coverage" NAME="raw_audio_model Coverage Results" MODIFIED="1712474526676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/final_project$1d_model.coverage" NAME="1d_model Coverage Results" MODIFIED="1712245441829" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$raw_audio_model.coverage" NAME="raw_audio_model Coverage Results" MODIFIED="1712480987768" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$diarisation.coverage" NAME="diarisation Coverage Results" MODIFIED="1712568978164" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$1d_model.coverage" NAME="1d_model Coverage Results" MODIFIED="1712952022745" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$sad_extraction.coverage" NAME="sad_extraction Coverage Results" MODIFIED="1712823360153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/final_project$neural_net.coverage" NAME="neural_net Coverage Results" MODIFIED="1711021032052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$balancing.coverage" NAME="balancing Coverage Results" MODIFIED="1712835524555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$deal_with__images.coverage" NAME="deal_with _images Coverage Results" MODIFIED="1712950698343" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/final_project$extract.coverage" NAME="extract Coverage Results" MODIFIED="1713172485552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/feature_extraction" />
   </component>
 </project>

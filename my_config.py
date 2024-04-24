@@ -45,7 +45,7 @@ MAX_LENGTH_MFCC = 4096
 MFCC_HOP_LENGTH = 512
 N_FTT = 1024
 
-MFCC_SHAPE = (120, 13)
+MFCC_SHAPE = (480, 13)
 
 # MEL SPECTROGRAM PARAMETERS
 N_MELS = 256 # it was 80
@@ -56,7 +56,7 @@ FRAME_LENGTH = 4
 MEL_HOP_LENGTH_WINDOW = 32
 
 # LOGMEL_SHAPE = (MEL_LENGTH, N_MELS, 1)
-LOGMEL_SHAPE = (120, N_MELS)
+LOGMEL_SHAPE = (480, N_MELS)
 SPECTROGRAM_SHAPE = (120, 513)
 
 # RAW AUDIO PARAMETERS
@@ -66,23 +66,64 @@ H = 512
 RAW_SHAPE = (NSEG * H, 1)
 
 # CHROMA PARAMETERS
-CHROMA_SHAPE = (120, 128)
+CHROMA_SHAPE = (480, 12)
 
 # FEATURE SHAPES DICTIONARY
 FEATURE_SHAPES = {
-    'mfcc': (MFCC_SHAPE,),  # Replace with your actual MFCC shape
-    'chroma': (CHROMA_SHAPE,),  # Replace with your actual Chroma shape
+    'mfcc': (MFCC_SHAPE,),
+    'chroma': (CHROMA_SHAPE,),
     'logmel': (LOGMEL_SHAPE,),
-    'spectrogram': (SPECTROGRAM_SHAPE,),  # Replace with your actual Spectrogram shape
+    'spectrogram': (SPECTROGRAM_SHAPE,)
 }
 
 
 # NN PARAMETERS
 EPOCHS = 200
-BATCH_SIZE = 64
+BATCH_SIZE = 256
 NUM_CLASSES = 2  # 4 for multiclass
 N_CHANNELS = 1
 
-INITIAL_LEARNING_RATE = 0.0001
-DECAY_FACTOR = 0.9
-EPOCHS_DROP = 6
+INITIAL_LEARNING_RATE = 0.001
+DECAY_FACTOR = 0.97
+EPOCHS_DROP = 20
+
+
+
+# =============================================================
+
+# # Assuming a standard audio segment length of 3.84 seconds as per your previous implementation
+# SEGMENT_LENGTH_SEC = 3.84
+#
+# # Sample rate
+# SR = 16000
+#
+# # Samples per segment
+# SAMPLES_PER_SEGMENT = int(SEGMENT_LENGTH_SEC * SR)
+#
+# # Using the window length and hop length, for 512 sample frames with 50% overlap every frame
+# N_FFT = 1024
+# HOP_LENGTH = int(N_FFT / 2)
+#
+# # For MFCCs
+# N_MFCC = 13
+# MFCC_SHAPE = (481, 13)
+#
+# # For MEL filterbank features
+# N_MELS = 40
+# MEL_SHAPE = (40, 121)
+#
+# # Chroma features
+# N_CHROMA = 12
+# CHROMA_SHAPE = (12, 121)
+#
+# # For (log) spectrogram
+# N_FTT = 1024
+# SPECTROGRAM_SHAPE = (513, 121)
+#
+# # Finally,
+# FEATURE_SHAPES = {
+#     'mfcc': MFCC_SHAPE,
+#     'chroma': CHROMA_SHAPE,
+#     'logmel': MEL_SHAPE,
+#     'spectrogram': SPECTROGRAM_SHAPE,
+# }

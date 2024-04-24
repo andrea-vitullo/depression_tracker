@@ -2,6 +2,7 @@ import numpy as np
 import h5py
 import random
 
+
 class FeatureAugmentor:
     def __init__(self, noise_level=0.005, time_mask_width=10, freq_mask_width=5):
         self.noise_level = noise_level
@@ -52,5 +53,6 @@ def apply_augmentation(h5_path, feature_key='audio'):
             print(f"Augmentation for group {key} completed and saved as {augmented_key} in the HDF5 file.")
     print("All augmentations completed.")
 
-apply_augmentation('/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/train_chroma.h5',
+
+apply_augmentation('/processed_audio_features/train_chroma.h5',
                    feature_key='audio')

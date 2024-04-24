@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import h5py
 import os
-from multi_data_generator import MultiDataGenerator
+from data_management.data_generator import DataGenerator
 
 
 class TestMultiDataGenerator(unittest.TestCase):
@@ -39,7 +39,7 @@ class TestMultiDataGenerator(unittest.TestCase):
 
     def test_feature_shapes(self):
         batch_size = 5
-        generator = MultiDataGenerator(self.mock_h5_paths, batch_size, self.feature_shapes)
+        generator = DataGenerator(self.mock_h5_paths, batch_size, self.feature_shapes)
 
         inputs, outputs = next(iter(generator))
 
@@ -50,7 +50,7 @@ class TestMultiDataGenerator(unittest.TestCase):
 
     def test_batch_shape(self):
         batch_size = 10
-        generator = MultiDataGenerator(self.mock_h5_paths, batch_size, self.feature_shapes)
+        generator = DataGenerator(self.mock_h5_paths, batch_size, self.feature_shapes)
 
         inputs, _ = next(iter(generator))
 
@@ -64,7 +64,7 @@ class TestMultiDataGenerator(unittest.TestCase):
         batch_size = 10
         for feature, path in self.mock_h5_paths.items():
             mock_files = {feature: path}
-            generator = MultiDataGenerator(mock_files, batch_size, {feature: self.feature_shapes[feature]})
+            generator = DataGenerator(mock_files, batch_size, {feature: self.feature_shapes[feature]})
             _, outputs = next(iter(generator))
             # Assuming the binary transformation logic is already applied in your DataGenerator
             unique_labels = np.unique(outputs)
@@ -78,7 +78,7 @@ class TestMultiDataGenerator(unittest.TestCase):
         for feature in self.feature_shapes.keys():
             mock_files = {feature: 'path/to/nonexistent_file.h5'}
             with self.assertRaises(Exception, msg=f"{feature} incorrect path not handled"):
-                generator = MultiDataGenerator(mock_files, batch_size, {feature: self.feature_shapes[feature]})
+                generator = DataGenerator(mock_files, batch_size, {feature: self.feature_shapes[feature]})
                 _ = next(iter(generator))  # Attempt to generate the first batch
 
 

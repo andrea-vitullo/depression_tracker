@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import os
 import h5py
-from multi_data_loader import MultiDataLoader
+from data_management.data_loader import DataLoader
 
 
 class TestMultiDataLoader(unittest.TestCase):
@@ -26,8 +26,8 @@ class TestMultiDataLoader(unittest.TestCase):
 
     def test_initialization(self):
         feature_shapes = {'mfcc': (120, 13)}
-        data_loader = MultiDataLoader({'mfcc': self.mock_h5_path}, {'mfcc': self.mock_h5_path},
-                                      {'mfcc': self.mock_h5_path}, feature_shapes)
+        data_loader = DataLoader({'mfcc': self.mock_h5_path}, {'mfcc': self.mock_h5_path},
+                                 {'mfcc': self.mock_h5_path}, feature_shapes)
 
         self.assertIsNotNone(data_loader.train_dataset)
         self.assertIsNotNone(data_loader.dev_dataset)
@@ -35,8 +35,8 @@ class TestMultiDataLoader(unittest.TestCase):
 
     def test_data_generator_integration(self):
         feature_shapes = {'mfcc': (120, 13)}
-        data_loader = MultiDataLoader({'mfcc': self.mock_h5_path}, {'mfcc': self.mock_h5_path},
-                                      {'mfcc': self.mock_h5_path}, feature_shapes)
+        data_loader = DataLoader({'mfcc': self.mock_h5_path}, {'mfcc': self.mock_h5_path},
+                                 {'mfcc': self.mock_h5_path}, feature_shapes)
 
         for dataset in [data_loader.train_dataset, data_loader.dev_dataset, data_loader.test_dataset]:
             for inputs, outputs in dataset.take(1):  # Taking one batch for the test

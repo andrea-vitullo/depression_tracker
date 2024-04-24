@@ -5,7 +5,7 @@ utils/.DS_Store
 utils/__pycache__/
 .idea/
 model/
-model_plot.png
+model/model_plot.png
 processed_audio_features/
 
 # Created by https://www.toptal.com/developers/gitignore/api/python

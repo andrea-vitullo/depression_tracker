@@ -2,11 +2,11 @@ import tensorflow as tf
 import os
 import numpy as np
 
-from my_config import BATCH_SIZE, FEATURE_SHAPES
-from multi_data_generator import MultiDataGenerator
+from my_config import BATCH_SIZE
+from data_management.data_generator import DataGenerator
 
 
-class MultiDataLoader:
+class DataLoader:
     def __init__(self, train_files, dev_files, test_files, feature_shapes):
         self.train_files = train_files
         self.dev_files = dev_files
@@ -32,7 +32,7 @@ class MultiDataLoader:
         return np.array(all_labels)
 
     def load_dataset(self, file_dict, data_augmentation=False):
-        generator = MultiDataGenerator(file_dict, BATCH_SIZE, self.feature_shapes)
+        generator = DataGenerator(file_dict, BATCH_SIZE, self.feature_shapes)
 
         def gen():
             for features, labels in generator:
