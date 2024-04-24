@@ -50,8 +50,6 @@ def save_outputs(features, audio, path):
     """
 
     df = pd.DataFrame(features)
-    # n = 5  # The number of columns to keep (replace as needed)
-    # df = df.iloc[:, :n]
 
     output_filename = os.path.join(path, f'{audio[0:3]}_features.csv')
     df.to_csv(output_filename, index=False)
@@ -83,14 +81,11 @@ def file_sorter(file_path, dir_0, dir_1, binary_value, gender_value, filename, s
         gender_dir = "male" if gender_value == 1 else "female"
         dest_dir = os.path.join(main_dest_dir, gender_dir)
 
-        # Create the gender subdirectory if it doesn't exist
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
 
-        # Create destination file path
         dest_file_path = os.path.join(dest_dir, filename)
 
-        # Move the file to the appropriate destination directory
         shutil.move(file_path, dest_file_path)
         print(f'Moved file: {filename} to {dest_dir}\n')
     else:
