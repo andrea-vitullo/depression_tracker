@@ -48,8 +48,8 @@ N_FTT = 1024
 MFCC_SHAPE = (480, 13)
 
 # MEL SPECTROGRAM PARAMETERS
-N_MELS = 256 # it was 80
-MEL_LENGTH = 240 # it was 4096
+N_MELS = 256  # it was 80
+MEL_LENGTH = 240  # it was 4096
 MEL_HOP_LENGTH = 512
 MEL_N_FFT = 1024
 FRAME_LENGTH = 4
@@ -88,7 +88,6 @@ DECAY_FACTOR = 0.97
 EPOCHS_DROP = 20
 
 
-
 # =============================================================
 
 # # Assuming a standard audio segment length of 3.84 seconds as per your previous implementation
@@ -108,7 +107,7 @@ EPOCHS_DROP = 20
 # N_MFCC = 13
 # MFCC_SHAPE = (481, 13)
 #
-# # For MEL filterbank features
+# # For MEL filter-bank features
 # N_MELS = 40
 # MEL_SHAPE = (40, 121)
 #
