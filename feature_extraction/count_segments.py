@@ -10,9 +10,9 @@ import features_extractors
 # based on extraction type to perform import from features_extractors
 EXTRACTION_FUNCTIONS = {
     'mfcc': features_extractors.extract_mfcc_segments,
-    # 'chroma': features_extractors.extract_chroma_segments,
-    # 'logmel': features_extractors.extract_logmel_segments,
-    # 'spectrogram': features_extractors.extract_spectrogram_segments
+    'chroma': features_extractors.extract_chroma_segments,
+    'logmel': features_extractors.extract_logmel_segments,
+    'spectrogram': features_extractors.extract_spectrogram_segments
 }
 
 
@@ -38,11 +38,11 @@ def find_min_segments_per_file(files, extraction_functions, sr=22050):
     Returns:
         int: Minimum number of segments that can be extracted from any audio file.
     """
-    min_segments = None
+
+    minimum_segments = None
 
     segments_list = []
 
-    # Iterate over each file
     for file_path in files:
         audio, _ = librosa.load(file_path, sr=sr)
 
@@ -51,13 +51,14 @@ def find_min_segments_per_file(files, extraction_functions, sr=22050):
             num_segments = extraction_func(audio, sr, count_segments=True)
             segments_list.append(num_segments)
 
-            if min_segments is None or num_segments < min_segments:
-                min_segments = num_segments
+            if minimum_segments is None or num_segments < minimum_segments:
+                minimum_segments = num_segments
 
-    return min_segments, segments_list
+    return minimum_segments, segments_list
 
 
 segment_counts_sample = []
+
 
 try:
     min_segments, segment_counts_sample = find_min_segments_per_file(train_files, EXTRACTION_FUNCTIONS)
@@ -66,7 +67,7 @@ except Exception as e:
     print(f"Error while calculating minimum segments: {e}")
 
 
-# Now, calculate percentiles for this sample list
+# Calculates the percentiles for the sample list
 percentiles = [25, 50, 75]
 for p in percentiles:
     value = np.percentile(segment_counts_sample, p)
