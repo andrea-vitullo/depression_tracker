@@ -43,6 +43,29 @@ for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
 
 def preprocess_and_save_features(file_paths, dataset_labels, out_file_path, extraction_function,
                                  speakers_per_class=None, max_segments=10, group_mean=0, group_std=1):
+    """
+    Preprocess given audio files and extract the features of each segment. Then, it saves those features to HDF5 file.
+
+    This function scans the given file paths, extracts the features from each audio segment using the provided
+    extraction function, and then saves those features into a HDF5 file at the given output path.
+    The function also maintains a balance of speakers per class, thus ensuring that the data does not become skewed
+    towards any class.
+
+    Args:
+        file_paths (list): List of file paths of the audio files.
+        dataset_labels (list): Corresponding labels for each of the audio files.
+        out_file_path (str): The output path for saving the preprocessed data as a HDF5 file.
+        extraction_function (callable): Function used to extract features from the audio data.
+        speakers_per_class (int, optional): The desired number of speakers per class. If not provided, the minimum
+        number of speakers across all classes will be used.
+        max_segments (int, optional): Maximum number of segments to process per audio file.
+        group_mean (float, optional): Normalization factor (mean value) used during feature extraction. Default is 0.
+        group_std (float, optional): Normalization factor (standard deviation value) used during feature extraction.
+        Default is 1.
+
+    Returns:
+        None. The extracted features are written to a HDF5 file.
+    """
 
     # Initialize counters for depressed/non-depressed segments
     label_counters = defaultdict(int)
