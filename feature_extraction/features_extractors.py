@@ -241,9 +241,31 @@ def extract_mel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512):
 
 
 def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
+    """
+    This function segments the audio and computes logarithmic spectrograms for each segment.
 
-    # The length of each segment in samples to fit exactly 120 frames
-    segment_length_samples = 245760  # 61,440 samples to fit the requirement
+    Args:
+        audio (numpy.ndarray): Input audio signal as a numpy array.
+        n_fft (int, optional): Length of the FFT window. Default is 1024.
+        hop_length (int, optional): Number of audio samples between successive frames. Default is 512.
+
+    Returns:
+        spectrogram_segments (List[numpy.ndarray]): A list containing the logarithmic spectrogram of each segmented
+        frame of the audio.
+
+    Notes:
+        - The input audio is divided into segments of fixed length (here, 245760 samples). This size is set to fit
+          exactly 480 spectrogram frames for each audio segment.
+        - For each of these segments, the Short-Time Fourier Transform (STFT) is computed, and then converted to a
+          spectrogram by squaring the magnitude of the complex STFT.
+        - The power spectrogram is then converted into decibel units to form a logarithmic spectrogram.
+        - If the computed logarithmic spectrogram exceeds the desired 480-frame size, it's trimmed accordingly.
+        - Finally, all spectrogram segments are returned as a list.
+    """
+
+    # 245760 is the length of each segment in samples to fit exactly 480 frames
+    # 61,440 samples to fit 120 frames, 122,880 to fit 240 and so on...
+    segment_length_samples = 245760
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
@@ -269,13 +291,13 @@ def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
 
         logspectrogram_transposed = logspectrogram.T
 
-        if logspectrogram_transposed.shape[0] > 120:
-            logspectrogram_transposed = logspectrogram_transposed[:120, :]
+        if logspectrogram_transposed.shape[0] > 480:
+            logspectrogram_transposed = logspectrogram_transposed[:480, :]
 
-        # Append the processed, normalized log-spectrogram segment to the list
+        # Append the processed log-spectrogram segment to the list
         spectrogram_segments.append(logspectrogram_transposed)
 
-    # Optionally, you could print the shape of one segment to verify the dimensions
+    # Check the shape of one segment to verify the dimensions
     if spectrogram_segments:
         # n_fft//2 + 1 is the number of unique STFT bins
         print(f"One spectrogram segment shape: {spectrogram_segments[0].shape} (Expected: (120, {n_fft // 2 + 1}))")
@@ -284,8 +306,32 @@ def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
 
 
 def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
-    # The length of each segment in samples to fit exactly 120 frames
-    segment_length_samples = 245760  # 61,440 samples to fit the requirement, 122880
+    """
+    This function segments the audio and computes Chroma features for each segment.
+
+    Args:
+        audio (numpy.ndarray): Input audio signal.
+        sr (int): The sampling rate of the audio.
+        n_fft (int, optional): FFT window size. Default is 1024.
+        hop_length (int, optional): The number of samples between successive frames. Default is 128.
+
+    Returns:
+        chroma_segments (List[numpy.ndarray]): A list containing the Chroma feature matrix for each segment of
+        the audio.
+
+    Notes:
+        - The audio is divided into segments of fixed length (245760 samples). This size is chosen to match exactly
+          480 chroma frames per segment.
+        - The chroma features, often used in music information retrieval, represent the energy distribution across
+          different pitch classes.
+        - For each segment, the Chroma features are computed and then transposed to match the expected shape.
+        - If the resulting chroma frames exceed or are less than the expected 480 frames, adjustments are made by
+          either trimming or padding the frames with zeros.
+    """
+
+    # 245760 is the length of each segment in samples to fit exactly 480 frames
+    # 61,440 samples to fit 120 frames, 122,880 to fit 240 and so on...
+    segment_length_samples = 245760
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
@@ -300,11 +346,15 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
         # Extract the segment from the audio
         segment = audio[start_sample:end_sample]
 
+        # A chromagram is a representation of the short-term energy within different chroma bands (essentially pitches),
+        # which is often used in musical audio analysis. However, the computation of a chromagram can sometimes result
+        # in complex numbers, which results in a np.ComplexWarning when further computations are performed on the
+        # chromagram. The use of the warnings.catch_warnings() context manager is to prevent this np.ComplexWarning
+        # from being shown.
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=np.ComplexWarning)
             chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length, n_chroma=12)
 
-            # Transpose the chroma matrix
             chroma_transposed = chroma.T
 
             # Trim the last time frame if chroma shape exceeds the expected frame count
@@ -314,11 +364,11 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
                 pad_width = ((0, 480 - chroma_transposed.shape[0]), (0, 0))  # Padding applies only to time axis
                 chroma_transposed = np.pad(chroma_transposed, pad_width, mode='constant')
 
-            # Append the processed, normalized chroma segment to the list
+            # Append the processed chroma segment to the list
             chroma_segments.append(chroma_transposed)
 
-    # Optionally, you can check the shape of one segment to verify the dimensions
+    # Check the shape of one segment to verify the dimensions
     if chroma_segments:
-        print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 12))")  # 12 chroma features
+        print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 12))")
 
     return chroma_segments
