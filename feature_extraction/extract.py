@@ -147,6 +147,7 @@ for dataset_name, (files, labels) in datasets.items():
             files,
             labels,
             output_file_path,
+            max_segments=10,
             extraction_function=extraction_func,
             speakers_per_class=None,
             group_mean=mean,
