@@ -41,20 +41,20 @@ for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
     global_stats[feature_name] = {'mean': mean, 'std': std}
 
 
-def preprocess_and_save_features(file_paths, labels, output_file_path, extraction_func, speakers_per_class=None,
-                                 max_segments=10, mean=0, std=1):
+def preprocess_and_save_features(file_paths, dataset_labels, out_file_path, extraction_function,
+                                 speakers_per_class=None, max_segments=10, group_mean=0, group_std=1):
 
     # Initialize counters for depressed/non-depressed segments
     label_counters = defaultdict(int)
 
-    print(f"Creating directory {os.path.dirname(output_file_path)} if it doesn't exist...")
-    os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+    print(f"Creating directory {os.path.dirname(out_file_path)} if it doesn't exist...")
+    os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
 
     # Map speaker IDs to their audio files and labels
     speaker_data = {}
 
     print("Mapping speaker IDs to their files and labels...")
-    for path, label in zip(file_paths, labels):
+    for path, label in zip(file_paths, dataset_labels):
         speaker_id = re.findall(r"(\d+)_NoSilence.wav", path)[0]
         if speaker_id not in speaker_data:
             speaker_data[speaker_id] = {'files': [], 'label': label}
@@ -64,7 +64,7 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 
     # Calculate the number of speakers per class only if it's not provided
     if speakers_per_class is None:
-        class_counts = {label: 0 for label in set(labels)}
+        class_counts = {label: 0 for label in set(dataset_labels)}
         for speaker in speaker_data.values():
             class_counts[speaker['label']] += 1
         speakers_per_class = min(class_counts.values())
@@ -74,14 +74,14 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 
     # Select a balanced set of speakers for each class
     print("Selecting a balanced set of speakers for each class...")
-    balanced_speakers = {label: [] for label in set(labels)}
+    balanced_speakers = {label: [] for label in set(dataset_labels)}
     for speaker_id, data in speaker_data.items():
         if len(balanced_speakers[data['label']]) < speakers_per_class:
             balanced_speakers[data['label']].append(speaker_id)
             print(f"Speaker ID {speaker_id} with label {data['label']} selected.")
 
-    with h5py.File(output_file_path, 'w') as h5f:
-        print(f"Opened {output_file_path} for writing.")
+    with h5py.File(out_file_path, 'w') as h5f:
+        print(f"Opened {out_file_path} for writing.")
 
         for class_label, speakers in balanced_speakers.items():
             print(f"Processing class label {class_label} with {len(speakers)} speakers.")
@@ -94,10 +94,10 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
                     audio, sr = librosa.load(file_path, sr=None)
 
                     print(f"Extracting segments from {file_path}...")
-                    all_segments = extraction_func(audio, sr, mean=mean, std=std)
+                    all_segments = extraction_function(audio, sr, mean=group_mean, std=group_std)
 
                     # Skip the first segment and limit the number of segments
-                    segments = all_segments[1:max_segments+1]  # skips the first segment and takes up to max_segments
+                    segments = all_segments[1:max_segments+1]
 
                     for i, segment in enumerate(segments):
                         grp_name = f"{speaker_id}_{class_label}_{i}"
@@ -107,23 +107,25 @@ def preprocess_and_save_features(file_paths, labels, output_file_path, extractio
 
                         label_counters[class_label] += 1
 
-                        print(f"Saved segment {i + 1}/{len(segments)} for file {os.path.basename(file_path)}, label {label}.")
+                        print(f"Saved segment {i + 1}/{len(segments)} "
+                              f"for file {os.path.basename(file_path)}, label {label}.")
 
-    print(f"Data preprocessed and saved to {output_file_path}.\n")
+    print(f"Data preprocessed and saved to {out_file_path}.\n")
 
 
 # Process and save features for each dataset and extraction function
 for dataset_name, (files, labels) in datasets.items():
-  for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
+    for feature_name, extraction_func in EXTRACTION_FUNCTIONS.items():
 
-    output_file_path = f'/Users/andreavitullo/Desktop/Python/final_project/processed_audio_features/{dataset_name}_{feature_name}.h5'
-    mean, std = global_stats[feature_name]['mean'], global_stats[feature_name]['std']  # Get the appropriate mean and std
-    preprocess_and_save_features(
-        files,
-        labels,
-        output_file_path,
-        extraction_func=extraction_func,
-        speakers_per_class=None,
-        mean=mean,
-        std=std
-    )
+        output_file_path = (f'/Users/andreavitullo/Desktop/Python/final_project/'
+                            f'processed_audio_features/{dataset_name}_{feature_name}.h5')
+        mean, std = global_stats[feature_name]['mean'], global_stats[feature_name]['std']
+        preprocess_and_save_features(
+            files,
+            labels,
+            output_file_path,
+            extraction_function=extraction_func,
+            speakers_per_class=None,
+            group_mean=mean,
+            group_std=std
+        )
