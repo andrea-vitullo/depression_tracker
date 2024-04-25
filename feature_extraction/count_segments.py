@@ -3,17 +3,10 @@ import librosa
 
 import my_config
 from utils import utils
-import features_extractors
+from extract import EXTRACTION_FUNCTIONS
 
 
-# EXTRACTION FUNCTION
-# based on extraction type to perform import from features_extractors
-EXTRACTION_FUNCTIONS = {
-    'mfcc': features_extractors.extract_mfcc_segments,
-    'chroma': features_extractors.extract_chroma_segments,
-    'logmel': features_extractors.extract_logmel_segments,
-    'spectrogram': features_extractors.extract_spectrogram_segments
-}
+EXTRACTION_FUNCTIONS = EXTRACTION_FUNCTIONS
 
 
 # Load the data
@@ -22,7 +15,7 @@ dev_files, dev_labels = utils.load_files_labels(my_config.AUDIO_DEV_DIR)
 test_files, test_labels = utils.load_files_labels(my_config.AUDIO_TEST_DIR)
 
 
-def find_min_segments_per_file(files, extraction_functions, sr=22050):
+def find_min_segments_per_file(files, extraction_functions, sr=my_config.SAMPLERATE):
     """
     Determine the minimum number of segments that can be extracted from any audio file in the dataset,
     across all specified features.

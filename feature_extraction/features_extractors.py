@@ -1,9 +1,7 @@
 import numpy as np
 import librosa
-from sklearn.preprocessing import StandardScaler
 import warnings
 
-import my_config
 from utils import audio_utils
 
 
@@ -306,27 +304,3 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128, mean=0, std=1
         print(f"One chroma segment shape: {chroma_segments[0].shape} (Expected: (120, 12))")  # 12 chroma features
 
     return chroma_segments
-
-
-# def compute_global_stats(files, extraction_func):
-#     all_values = []
-#     total_files = len(files)
-#     print(f"Starting computation of global stats for {total_files} files.")
-#
-#     for i, file_path in enumerate(files):
-#         print(f"Processing file {i+1}/{total_files}: {file_path}")
-#         try:
-#             audio, sr = librosa.load(file_path, sr=None)  # Load with the original sampling rate
-#             segments = extraction_func(audio, sr)
-#             # Flatten and extend the list of all segments
-#             all_values.extend(np.concatenate(segments).ravel())
-#         except Exception as e:
-#             print(f"Error processing {file_path}: {e}")
-#             continue  # Skip this file and move to the next
-#
-#     mean = np.mean(all_values)
-#     std = np.std(all_values)
-#
-#     print(f"Global mean: {mean}, Global std: {std}")
-#
-#     return mean, std

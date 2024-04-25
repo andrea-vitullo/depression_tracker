@@ -15,7 +15,7 @@ EXTRACTION_FUNCTIONS = {
     'mfcc': features_extractors.extract_mfcc_segments,
     'chroma': features_extractors.extract_chroma_segments,
     'logmel': features_extractors.extract_logmel_segments,
-    # 'spectrogram': features_extractors.extract_spectrogram_segments
+    'spectrogram': features_extractors.extract_spectrogram_segments
 }
 
 
