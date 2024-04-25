@@ -5,7 +5,79 @@ import warnings
 from utils import audio_utils
 
 
-def extract_raw_audio_segments(audio, sr, target_length=61440, mean=0, std=1):
+def compute_global_stats(files, extraction_func):
+    """
+    Computes and returns the global mean and standard deviation across all values in a specified extraction
+    function, obtained from all provided files.
+
+    Args:
+        files (list): A list of paths to audio files.
+        extraction_func (function): A function which performs feature extraction on audio data (e.g., computes MFCCs).
+
+    Returns:
+        mean (float): The global mean computed across all values in every segment from all files.
+        std_dev (float): The global standard deviation computed across all values in every segment from all files.
+
+    Notes:
+        This function uses the Welford's online algorithm to compute the mean and variance.
+        Extraction function is expected to return a list of 2D arrays
+        for a single audio file.
+        Welford, B. P. (1962). "Note on a method for calculating corrected sums of squares and products".
+        Technometrics. 4 (3): 419–420. doi:10.2307/1266577. JSTOR 1266577.
+    """
+
+    count = 0
+    mean = 0.0
+    m2 = 0.0
+
+    total_files = len(files)
+    print(f"Starting computation of global stats for {total_files} files.")
+
+    for i, file_path in enumerate(files):
+        print(f"Processing file {i + 1}/{total_files}: {file_path}")
+        try:
+            audio, sr = librosa.load(file_path, sr=None)
+            segments = extraction_func(audio, sr)
+
+            # Flatten segments and iterate over each value
+            for value in np.concatenate(segments).ravel():
+                count += 1
+
+                # Update mean and m2
+                delta = value - mean
+                mean += delta / count
+                delta2 = value - mean
+                m2 += delta * delta2
+
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+
+    # Compute standard deviation
+    variance_n = m2 / (count if count > 0 else 1)
+    std_dev = np.sqrt(variance_n)
+
+    print(f"Global mean: {mean}, Global std: {std_dev}")
+
+    return mean, std_dev
+
+
+def extract_raw_audio_segments(audio, target_length=61440, mean=0, std=1):
+    """
+    Extracts segments from the given raw audio data and standardizes each segment.
+
+    This function divides a given audio signal into multiple segments of equal length. The target segment length
+    is defined by the target_length parameter. Each segment is then standardized using the provided mean and standard
+    deviation, and reshaped into (segment_length, 1) before being stored in the list of segments.
+
+    Args:
+        audio (numpy.ndarray): The raw audio data to segment.
+        target_length (int, optional): The desired length of each segment. Default is 61440.
+        mean (float, optional): The mean value used for standardizing the audio data. Default is 0.
+        std (float, optional): The standard deviation used for standardizing the audio data. Default is 1.
+
+    Returns:
+        raw_audio_segments (list): List of the extracted raw audio segments.
+    """
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // target_length
@@ -25,20 +97,48 @@ def extract_raw_audio_segments(audio, sr, target_length=61440, mean=0, std=1):
 
         raw_audio_segments.append(segment[:, np.newaxis])
 
-    # Optionally, you could print the shape of one segment to verify the dimensions
     if raw_audio_segments:
         print(f"One raw audio segment shape: {raw_audio_segments[0].shape} (Expected: (61440, 1))")
 
     return raw_audio_segments
 
 
-def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_mfcc=13, mean=0, std=1, count_segments=False):
-    # The length of each segment in samples to fit exactly 120 frames
-    segment_length_samples = 245760  # 61,440 samples to fit the requirement   122,880
+def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_mfcc=13, count_segments=False):
+    """
+    This function splits the audio into segments and computes the Mel Frequency Cepstral Coefficients (MFCCs)
+    for each segment.
+
+    Args:
+        audio (numpy.ndarray): The raw waveform of the audio signal.
+        sr (int): The sampling rate of the audio.
+        n_mels (int, optional): Number of Mel filters to use. Default is 256.
+        n_fft (int, optional): Length of the FFT window. Default is 1024.
+        hop_length (int, optional): Amount of steps to move the analysis window for each Fourier Transform.
+                                    Default is 128.
+        n_mfcc (int, optional): Number of MFCCs to return. Default is 13.
+        count_segments (bool, optional): If true, it counts the number of segments that can be extracted
+
+    Returns:
+        num_segments (int): If count_segments is True, it returns the number of segments that can be extracted from
+                            the audio.
+        mfcc_segments (list): If count_segments is False, it returns a list of the MFCC matrices for each segment
+                              extracted from the audio.
+
+    Notes:
+        - The length of each segment (245,760 samples) is calculated to ensure that the resulting MFCC for each
+          segment forms a uniform matrix of size 480 x n_mfcc.
+        - Each segment is extracted sequentially from the input audio, and for each segment, an MFCC is computed
+          and stored.
+        - If the resulting MFCC for a segment is shorter than 480 frames, zero-padding is applied; if it's longer,
+          the excess frames are discarded.
+    """
+
+    # 245760 is the length of each segment in samples to fit exactly 480 frames
+    # 61,440 samples to fit 120 frames, 122,880 to fit 240 and so on...
+    segment_length_samples = 245760
+
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
-
-    print(num_segments)
 
     if count_segments:
         return num_segments
@@ -53,26 +153,10 @@ def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_m
         # Extract the segment from the audio
         segment = audio[start_sample:end_sample]
 
-        # Check if the segment is too short (this check should technically never trigger with fixed segment sizes, but it's good to have for debugging)
-        if len(segment) < n_fft:
-            print(f"Segment too short: {len(segment)} samples, expected at least {n_fft}")
-            continue  # Skip this segment
-
-        # Debugging output before the MFCC computation
-        # print(
-        #     f"Processing segment: {i + 1}/{num_segments}, Segment length: {len(segment)}, Sample Rate: {sr}, n_mfcc: {n_mfcc}, n_mels: {n_mels}, n_fft: {n_fft}, hop_length: {hop_length}")
-
         # Compute the MFCCs for the current segment
         mfccs = librosa.feature.mfcc(segment, sr=sr, n_mfcc=n_mfcc, n_mels=n_mels, n_fft=n_fft, hop_length=hop_length)
 
-        # Transpose the MFCCs matrix
         mfccs_transposed = mfccs.T
-
-        # # Normalize the mfccs for the segment
-        # mfccs_normalized = (mfccs_transposed - mean) / (std + 1e-8)
-        #
-        # # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
-        # mfccs_normalized -= np.mean(mfccs_normalized, axis=0, keepdims=True)
 
         # Trim the last time frame if mfcc shape exceeds the expected frame count
         if mfccs_transposed.shape[0] > 480:
@@ -81,69 +165,47 @@ def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_m
             pad_width = ((0, 480 - mfccs_transposed.shape[0]), (0, 0))  # Padding applies only to time axis
             mfccs_transposed = np.pad(mfccs_transposed, pad_width, mode='constant')
 
-        # Append the processed, normalized MFCC segment to the list
+        # Append the processed MFCC segment to the list
         mfcc_segments.append(mfccs_transposed)
 
-    # Optionally, you can check the shape of one segment to verify the dimensions
+    # Check the shape of one segment to verify the dimensions
     if mfcc_segments:
         print(f"One MFCC segment shape: {mfcc_segments[0].shape} (Expected: (120, {n_mfcc}))")
 
     return mfcc_segments
 
 
-def compute_global_stats(files, extraction_func):
-    # Initialize count, mean, M2
-    count = 0
-    mean = 0.0
-    M2 = 0.0
+def extract_mel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512):
+    """
+    This function segments the audio and extracts the logarithmic Mel-spectrograms for each segment.
 
-    total_files = len(files)
-    print(f"Starting computation of global stats for {total_files} files.")
+    Args:
+        audio (numpy.ndarray): The array containing audio samples.
+        sr (int): The sampling rate of the audio.
+        n_mels (int, optional): Number of Mel bands to generate. Default is 256.
+        n_fft (int, optional): The FFT window size. Default is 1024.
+        hop_length (int, optional): The number of samples between successive frames. Default is 512.
 
-    # For each file...
-    for i, file_path in enumerate(files):
-        print(f"Processing file {i + 1}/{total_files}: {file_path}")
-        try:
-            # Load audio file
-            audio, sr = librosa.load(file_path, sr=None)
+    Returns:
+        logmel_segments (List[numpy.ndarray]): A list of logarithmic Mel-spectrogram matrices for each extracted
+        audio segment.
 
-            # Extract segments
-            segments = extraction_func(audio, sr)
+    Notes:
+        - Each audio frame is extracted as a segment of fixed size (245760 samples) to match the Mel-spectrogram shape
+          of (480, n_mels).
+        - This size is calculated as it fits exactly 480 frames to ensure a consistent input size.
+          The count of 480 is arbitrary and could be changed depending on your use case.
+        - After clearly segmenting the audio, each segment is processed independently, converting the segment to a
+          Mel-spectrogram and then converting the power spectrogram to dB units.
+        - If the Mel-spectrogram exceeds the expected frame count of 480, it is trimmed to fit.
+    """
 
-            # Flatten segments and iterate over each value
-            for value in np.concatenate(segments).ravel():
-                # Increment count
-                count += 1
-
-                # Update mean and M2
-                delta = value - mean
-                mean += delta / count
-                delta2 = value - mean
-                M2 += delta * delta2
-
-        except Exception as e:
-            print(f"Error processing {file_path}: {e}")
-
-    # Compute standard deviation
-    variance_n = M2 / (count if count > 0 else 1)
-    std_dev = np.sqrt(variance_n)
-
-    print(f"Global mean: {mean}, Global std: {std_dev}")
-
-    return mean, std_dev
-
-
-def extract_logmel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512, mean=0, std=1, count_segments=False):
-    # The length of each segment in samples to fit exactly 120 frames
-    segment_length_samples = 245760  # 61,440 samples to fit the requirement
+    # 245760 is the length of each segment in samples to fit exactly 480 frames
+    # 61,440 samples to fit 120 frames, 122,880 to fit 240 and so on...
+    segment_length_samples = 245760
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
-
-    # print(num_segments)
-    #
-    # if count_segments:
-    #     return num_segments
 
     logmel_segments = []
 
@@ -164,45 +226,27 @@ def extract_logmel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512, m
 
         logmelspec_transposed = logmelspec.T
 
-        # # Calculate mean and std for each segment for normalization
-        # mean = np.mean(logmelspec_transposed)
-        # std = np.std(logmelspec_transposed)
-
-        # Normalize the log-mel spectrogram for the segment
-        # logmelspec_normalized = (logmelspec_transposed - mean) / (std + 1e-8)  # 1e-8 is just a very small number and it's often called epsilon in machine learning context.
-        #
-        # # Optional: Subtract the mean of each mel frequency bin from all frames (mean normalization per bin)
-        # # This step is done after segment-wise normalization to ensure each bin's relative level is maintained
-        # logmelspec_normalized -= np.mean(logmelspec_normalized, axis=1, keepdims=True)
-
         # Trim the last time frame if the spectrogram shape exceeds the expected frame count
         if logmelspec_transposed.shape[0] > 480:
             logmelspec_transposed = logmelspec_transposed[:480, :]
 
-        # Append the processed, normalized log-mel spectrogram segment to the list
+        # Append the processed log-mel spectrogram segment to the list
         logmel_segments.append(logmelspec_transposed)
 
-    # Optionally, you could print the shape of one segment to verify the dimensions
+    # Check the shape of one segment to verify the dimensions
     if logmel_segments:
         print(f"One log-mel segment shape: {logmel_segments[0].shape} (Expected: (120, 256))")
 
     return logmel_segments
 
 
-# SPECTROGRAM ON EACH SEGMENT #######################################################################################
+def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
 
-
-def extract_spectrogram_segments(audio, sr, n_fft=1024, hop_length=512, mean=0, std=1, count_segments=False):
     # The length of each segment in samples to fit exactly 120 frames
     segment_length_samples = 245760  # 61,440 samples to fit the requirement
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
-
-    # print(num_segments)
-    #
-    # if count_segments:
-    #     return num_segments
 
     spectrogram_segments = []
 
@@ -225,22 +269,11 @@ def extract_spectrogram_segments(audio, sr, n_fft=1024, hop_length=512, mean=0, 
 
         logspectrogram_transposed = logspectrogram.T
 
-        # # Calculate mean and std for each segment for normalization
-        # mean = np.mean(logspectrogram_transposed)
-        # std = np.std(logspectrogram_transposed)
-
-        # Normalize the log-spectrogram for the segment
-        logspectrogram_normalized = (logspectrogram_transposed - mean) / (std + 1e-8)  # 1e-8 prevents division by zero
-
-        # Optional: Subtract the mean of each frequency bin from all frames (mean normalization per bin)
-        # This step is done after segment-wise normalization to ensure each bin's relative level is maintained
-        logspectrogram_normalized -= np.mean(logspectrogram_normalized, axis=0, keepdims=True)
-
-        if logspectrogram_normalized.shape[0] > 120:
-            logspectrogram_normalized = logspectrogram_normalized[:120, :]
+        if logspectrogram_transposed.shape[0] > 120:
+            logspectrogram_transposed = logspectrogram_transposed[:120, :]
 
         # Append the processed, normalized log-spectrogram segment to the list
-        spectrogram_segments.append(logspectrogram_normalized)
+        spectrogram_segments.append(logspectrogram_transposed)
 
     # Optionally, you could print the shape of one segment to verify the dimensions
     if spectrogram_segments:
@@ -250,17 +283,12 @@ def extract_spectrogram_segments(audio, sr, n_fft=1024, hop_length=512, mean=0, 
     return spectrogram_segments
 
 
-def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128, mean=0, std=1, count_segments=False):
+def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
     # The length of each segment in samples to fit exactly 120 frames
     segment_length_samples = 245760  # 61,440 samples to fit the requirement, 122880
 
     # Calculate the total number of segments that can be extracted from the audio
     num_segments = len(audio) // segment_length_samples
-
-    # print(num_segments)
-    #
-    # if count_segments:
-    #     return num_segments
 
     chroma_segments = []
 
@@ -278,16 +306,6 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128, mean=0, std=1
 
             # Transpose the chroma matrix
             chroma_transposed = chroma.T
-
-            # # Calculate mean and std for each segment for normalization
-            # mean = np.mean(chroma_transposed)
-            # std = np.std(chroma_transposed)
-
-            # # Normalize the chroma features for the segment
-            # chroma_normalized = (chroma_transposed - mean) / (std + 1e-8)
-            #
-            # # Optional: Subtract the mean of each coefficient from all frames (mean normalization per bin)
-            # chroma_normalized -= np.mean(chroma_normalized, axis=0, keepdims=True)
 
             # Trim the last time frame if chroma shape exceeds the expected frame count
             if chroma_transposed.shape[0] > 480:

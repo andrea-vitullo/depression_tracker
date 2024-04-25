@@ -7,7 +7,7 @@ import soundfile as sf
 import random
 
 from my_config import *
-from feature_extraction.features_extractors import extract_raw_audio_segments, extract_mfcc_segments, extract_logmel_segments, extract_spectrogram_segments, extract_chroma_segments
+from feature_extraction.features_extractors import extract_raw_audio_segments, extract_mfcc_segments, extract_mel_segments, extract_spectrogram_segments, extract_chroma_segments
 from utils.utils import compute_global_stats_from_test_data
 
 
@@ -137,7 +137,7 @@ class FeatureExtractionTest(unittest.TestCase):
         audio, sr = sf.read(audio_file_path)
 
         # Extract LogMel segments
-        logmel_segments = extract_logmel_segments(audio, sr, mean=global_mean, std=global_std)
+        logmel_segments = extract_mel_segments(audio, sr, mean=global_mean, std=global_std)
 
         # Select 5 continuous segments for visualization
         selected_segments = logmel_segments[:5]

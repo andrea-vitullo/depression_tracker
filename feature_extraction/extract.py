@@ -14,7 +14,7 @@ import features_extractors
 EXTRACTION_FUNCTIONS = {
     'mfcc': features_extractors.extract_mfcc_segments,
     'chroma': features_extractors.extract_chroma_segments,
-    'logmel': features_extractors.extract_logmel_segments,
+    'logmel': features_extractors.extract_mel_segments,
     'spectrogram': features_extractors.extract_spectrogram_segments
 }
 
@@ -57,11 +57,11 @@ def preprocess_and_save_features(file_paths, dataset_labels, out_file_path, extr
         out_file_path (str): The output path for saving the preprocessed data as a HDF5 file.
         extraction_function (callable): Function used to extract features from the audio data.
         speakers_per_class (int, optional): The desired number of speakers per class. If not provided, the minimum
-        number of speakers across all classes will be used.
+                                            number of speakers across all classes will be used.
         max_segments (int, optional): Maximum number of segments to process per audio file.
         group_mean (float, optional): Normalization factor (mean value) used during feature extraction. Default is 0.
         group_std (float, optional): Normalization factor (standard deviation value) used during feature extraction.
-        Default is 1.
+                                     Default is 1.
 
     Returns:
         None. The extracted features are written to a HDF5 file.
