@@ -36,6 +36,29 @@ class FeatureAugmentor:
 
 
 def apply_augmentation(h5_path, feature_key='audio'):
+    """
+    This function augments the feature data stored in the HDF5 file for each group.
+    Augmented features are stored back into the HDF5 file with a new group named by adding '_aug' suffix to the
+    original group name.
+
+    Args:
+        h5_path (str): Path to the HDF5 file storing the feature data.
+        feature_key (str, optional): The key used to access feature data within each group in the HDF5 file, default
+        is 'audio'.
+
+    Returns:
+          None
+
+    Notes:
+        - Augmentation is performed using the `FeatureAugmentor` class (assumed to pre-defined or imported).
+        - Augmentation is applied to all groups found in the HDF5 file which do not end with '_aug'.
+        - For each group, if augmented data already exists (determined by the presence of a group named
+          original+'_aug'), the function skips augmentation for that group.
+        - For new groups, the function creates a new group in the HDF5 file with the name as original+'_aug', and
+          stores the augmented data as a new dataset in the group.
+        - The group also duplicates the 'label' attribute from the original group.
+    """
+
     augmentor = FeatureAugmentor()
     with h5py.File(h5_path, 'r+') as f:
         keys = [k for k in f.keys() if not k.endswith('_aug')]  # Only get original keys (keys without '_aug' suffix)
