@@ -13,7 +13,6 @@ class DataLoader:
         self.test_files = test_files
         self.feature_shapes = feature_shapes
 
-        # Augmentation only for training data
         self.train_dataset = self.load_dataset(self.train_files)
         self.dev_dataset = self.load_dataset(self.dev_files)
         self.test_dataset = self.load_dataset(self.test_files)
@@ -31,7 +30,7 @@ class DataLoader:
             all_labels.extend(labels)
         return np.array(all_labels)
 
-    def load_dataset(self, file_dict, data_augmentation=False):
+    def load_dataset(self, file_dict):
         generator = DataGenerator(file_dict, BATCH_SIZE, self.feature_shapes)
 
         def gen():
