@@ -7,6 +7,7 @@ utils/__pycache__/
 model/model.keras
 model/model_plot.png
 processed_audio_features/
+model_backup.py
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
