@@ -17,13 +17,11 @@ class ModelTester:
         predictions = []
         test_labels = []
 
-        # Now we iterate over the test_dataset itself
         for inputs, labels in self.data_loader.test_dataset:
             preds = self.model.predict(inputs)
             predictions.extend(preds)
             test_labels.extend(labels.numpy())
 
-        # Apply the threshold to convert probabilities into binary predictions
         predicted_classes = (np.array(predictions) > threshold).astype(int)
 
         assert len(test_labels) == len(predicted_classes), "Mismatch in number of true and predicted labels."
