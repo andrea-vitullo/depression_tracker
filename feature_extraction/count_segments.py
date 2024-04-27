@@ -6,9 +6,6 @@ from utils import utils
 from extract import EXTRACTION_FUNCTIONS
 
 
-EXTRACTION_FUNCTIONS = EXTRACTION_FUNCTIONS
-
-
 # Load the data
 train_files, train_labels = utils.load_files_labels(my_config.AUDIO_TRAIN_DIR)
 dev_files, dev_labels = utils.load_files_labels(my_config.AUDIO_DEV_DIR)
