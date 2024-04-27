@@ -3,8 +3,16 @@ import h5py
 import numpy as np
 import os
 import librosa
+from sklearn.utils import class_weight
 
 import my_config
+
+
+def calculate_class_weights(all_labels):
+    # This will compute the weights for each class to be applied during training
+    class_weights = class_weight.compute_sample_weight(class_weight='balanced', y=all_labels)
+    class_weights_dict = dict(enumerate(class_weights))
+    return class_weights_dict
 
 
 def lr_scheduler(epoch, lr):
