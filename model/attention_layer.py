@@ -32,7 +32,8 @@ def squeeze_excite_block(input2d):
     Args:
         input2d: input tensor
 
-    Returns: a keras tensor
+    Returns:
+        A keras tensor
     """
 
     filters = input2d.shape[-1]  # channel_axis = -1 for TF
@@ -56,7 +57,8 @@ def squeeze_excite_block_1d(input1d):
     Args:
         input1d: input tensor
 
-    Returns: a keras tensor
+    Returns:
+        A keras tensor
     """
 
     filters = input1d.shape[-1]  # channel_axis = -1 for TF
