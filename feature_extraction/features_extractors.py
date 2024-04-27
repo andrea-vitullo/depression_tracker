@@ -2,6 +2,7 @@ import numpy as np
 import librosa
 import warnings
 
+import my_config
 from utils import audio_utils
 
 
@@ -103,7 +104,11 @@ def extract_raw_audio_segments(audio, target_length=61440, mean=0, std=1):
     return raw_audio_segments
 
 
-def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_mfcc=13, count_segments=False):
+def extract_mfcc_segments(audio, sr,
+                          n_mels=my_config.MFCC_MELS,
+                          n_fft=my_config.N_FTT,
+                          hop_length=my_config.MFCC_HOP_LENGTH,
+                          n_mfcc=my_config.N_MFCC, count_segments=False):
     """
     This function splits the audio into segments and computes the Mel Frequency Cepstral Coefficients (MFCCs)
     for each segment.
@@ -175,7 +180,10 @@ def extract_mfcc_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=128, n_m
     return mfcc_segments
 
 
-def extract_mel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512):
+def extract_mel_segments(audio, sr,
+                         n_mels=my_config.MEL_SPEC_MELS,
+                         n_fft=my_config.N_FTT,
+                         hop_length=my_config.MEL_HOP_LENGTH):
     """
     This function segments the audio and extracts the logarithmic Mel-spectrograms for each segment.
 
@@ -240,7 +248,9 @@ def extract_mel_segments(audio, sr, n_mels=256, n_fft=1024, hop_length=512):
     return logmel_segments
 
 
-def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
+def extract_spectrogram_segments(audio,
+                                 n_fft=my_config.N_FTT,
+                                 hop_length=my_config.SPECTROGRAM_HOP_LENGTH):
     """
     This function segments the audio and computes logarithmic spectrograms for each segment.
 
@@ -305,7 +315,9 @@ def extract_spectrogram_segments(audio, n_fft=1024, hop_length=512):
     return spectrogram_segments
 
 
-def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
+def extract_chroma_segments(audio, sr,
+                            n_fft=my_config.N_FTT,
+                            hop_length=my_config.CHROMA_HOP_LENGTH):
     """
     This function segments the audio and computes Chroma features for each segment.
 
@@ -353,7 +365,10 @@ def extract_chroma_segments(audio, sr, n_fft=1024, hop_length=128):
         # from being shown.
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore', category=np.ComplexWarning)
-            chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft, hop_length=hop_length, n_chroma=12)
+
+            chroma = librosa.feature.chroma_stft(segment, sr=sr, n_fft=n_fft,
+                                                 hop_length=hop_length,
+                                                 n_chroma=my_config.N_CHROMA)
 
             chroma_transposed = chroma.T
 
